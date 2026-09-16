@@ -3,6 +3,7 @@ services:
     name: hkia-live-map
     runtime: python
     plan: free
+    region: singapore
 
     rootDir: AirportManager
     buildCommand: python3 -m py_compile hkia_live_server.py
