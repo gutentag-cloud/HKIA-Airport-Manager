@@ -728,6 +728,10 @@ def poll_forever(interval=300):
 
 
 class Handler(BaseHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header("Access-Control-Allow-Origin", "*")
+        super().end_headers()
+
     def do_GET(self):
         if self.path.startswith("/api/live"):
             try:
@@ -746,7 +750,6 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_response(502)
             self.send_header("Content-Type", "application/json")
             self.send_header("Cache-Control", "no-store")
-            self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
             self.wfile.write(body)
         elif self.path.startswith("/api/openaip-fixes"):

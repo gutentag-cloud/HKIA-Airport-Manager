@@ -32,6 +32,8 @@ jobs:
           # Make asset URLs relative so they work under the project subpath
           sed -i "s|CESIUM_BASE_URL='/cesium/'|CESIUM_BASE_URL='cesium/'|" site/index.html
           sed -i 's|url(/fonts/|url(fonts/|g' site/index.html
+          # Point API calls at the live Render backend (CORS enabled server-side)
+          sed -i "s|fetch('api/|fetch('https://hkia-live-map.onrender.com/api/|g" site/index.html
 
       - uses: actions/configure-pages@v5
 
