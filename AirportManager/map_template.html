@@ -1,0 +1,1462 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Airport Manager — VHHH</title>
+<style>__LEAFLET_CSS__</style>
+<script>__LEAFLET_JS__</script>
+<script>__THREE_JS__</script>
+<script>__ORBIT_JS__</script>
+<style>
+@font-face{font-family:'Open Sans';font-weight:400;font-style:normal;font-display:swap;src:url(/fonts/os400.woff2) format('woff2')}
+@font-face{font-family:'Open Sans';font-weight:600;font-style:normal;font-display:swap;src:url(/fonts/os600.woff2) format('woff2')}
+@font-face{font-family:'Open Sans';font-weight:700;font-style:normal;font-display:swap;src:url(/fonts/os700.woff2) format('woff2')}
+@font-face{font-family:'Open Sans';font-weight:800;font-style:normal;font-display:swap;src:url(/fonts/os800.woff2) format('woff2')}
+:root{--bg:#f4f5f7;--panel:#ffffff;--ink:#0f172a;--mut:#64748b;--line:#e2e8f0;--acc:#f59e0b;--blu:#1d4ed8}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink)}
+#app{display:flex;flex-direction:column;height:100%}
+#hdr{background:#eef0f3;color:#1f2937;padding:10px 14px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;border-bottom:1px solid #d5d9df}
+#hdr h1{font-size:16px;margin:0 8px 0 0;font-weight:650}
+#hdr .win{color:#64748b;font-size:12px;margin-right:auto}
+.seg{display:flex;border:1px solid #cbd5e1;border-radius:8px;overflow:hidden}
+.seg button{background:transparent;color:#475569;border:0;padding:6px 12px;cursor:pointer;font-size:13px}
+.seg button.on{background:#1d4ed8;color:#fff;font-weight:600}
+label.chk{display:flex;align-items:center;gap:6px;font-size:13px;color:#475569;cursor:pointer}
+#search{padding:6px 10px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;color:#111;min-width:240px;font-size:13px}
+#live{font-size:12px;display:flex;align-items:center;gap:6px;color:#cbd5e1}
+#live .dot{width:9px;height:9px;border-radius:50%;background:#64748b}
+#live.ok .dot{background:#22c55e;box-shadow:0 0 6px #22c55e}
+#live.snap .dot{background:#f59e0b}
+.now{border-left:3px solid #22c55e;padding:4px 8px;margin:3px 0;background:#f0fdf4;border-radius:4px;font-size:12.5px;cursor:pointer}
+.now:hover{background:#dcfce7}
+.now b{font-size:13px}
+.now .st{color:var(--mut);float:right}
+.lvbox{background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:8px 10px;margin:8px 0;font-size:13px}
+.lvbox b{color:#b45309}
+#boardview{flex:1;display:flex;flex-direction:column;background:#d8dbe0;min-width:0;overflow:auto;padding:16px 20px}
+#mapview{flex:1;display:none;min-width:0}
+#taxiview{flex:1;display:none;min-width:0}
+#flowview{flex:1;display:none;min-width:0}
+#flowmap{flex:1;min-width:0;background:#dce8f2}
+#flowside{width:320px;background:var(--panel);border-left:1px solid var(--line);overflow-y:auto;padding:14px 16px}
+.navmark{font-size:10px;color:#7c3aed;font-weight:700}
+#threeview{flex:1;display:none;position:relative;min-width:0;background:#cfe3f5;overflow:hidden}
+#threewrap{position:absolute;inset:0}
+#threewrap canvas{display:block}
+#threewrap>.cesium-viewer,#threewrap .cesium-viewer-cesiumWidgetContainer{width:100%;height:100%}
+#threewrap .cesium-widget,#threewrap .cesium-widget canvas{width:100%!important;height:100%!important;display:block}
+#threehint{position:absolute;bottom:10px;left:12px;font-size:11px;color:#475569;z-index:5;background:#ffffffcc;padding:3px 8px;border-radius:6px}
+#geobar{position:absolute;top:10px;left:12px;right:12px;z-index:6;display:flex;gap:8px;align-items:center;background:#ffffffd9;border:1px solid var(--line);padding:6px 8px;border-radius:8px;font-size:12px}
+#geobar input{flex:1;padding:5px 8px;border:1px solid #cbd5e1;border-radius:6px;font-size:12px}
+#geobar button{background:#1d4ed8;color:#fff;border:0;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:12px}
+#geobar button#geostylized{background:#eceef1;color:#475569}
+#geostat{color:var(--mut);min-width:90px}
+#taximap{flex:1;min-width:0;background:#dce8f2}
+#taxipanel{width:340px;background:var(--panel);border-left:1px solid var(--line);overflow-y:auto;padding:14px 16px}
+.hbar{display:flex;align-items:center;gap:6px;margin:2px 0;font-size:11.5px;color:var(--mut)}
+.hbar i{display:block;height:10px;background:#93c5fd;border-radius:2px}
+.hbar b{width:36px;font-weight:600;color:var(--ink)}
+#bhead{display:flex;align-items:center;gap:16px;margin-bottom:14px;flex-wrap:wrap}
+#btitle{color:#3d4552;font-size:13px;font-weight:700;letter-spacing:3px}
+#bhint{color:#8a909b;font-size:11.5px;margin-left:auto}
+#bsnd{background:#eceef1;color:#5d6572;border:1px solid #c6ccd4;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;letter-spacing:1px}
+#bsnd.on{color:#b45309;border-color:#b45309}
+.bclock{display:flex;gap:2px;margin-left:8px}
+.chead{display:flex;gap:6px;margin-bottom:8px}
+.chead span{color:#6b7280;font-size:10.5px;font-weight:700;letter-spacing:2px}
+.brow{display:flex;gap:6px;margin-bottom:6px;cursor:pointer}
+.brow:hover .tile .h{background:#ffffff}
+.tile{position:relative;width:26px;height:40px;flex:none;perspective:130px}
+.tile .h{position:absolute;left:0;right:0;height:50%;overflow:hidden;background:#f7f4ea;border-radius:2px;box-shadow:inset 0 0 0 1px #ddd8c8}
+.tile .h.t{top:0;border-bottom:1px solid #c9c4b2}
+.tile .h.b{bottom:0}
+.tile .h span{position:absolute;left:0;width:100%;height:40px;line-height:40px;text-align:center;font:700 25px/40px ui-monospace,Menlo,'Courier New',monospace;color:#16181d}
+.tile .h.t span{top:0}
+.tile .h.b span{bottom:0}
+.tile .seam{position:absolute;left:0;right:0;top:50%;height:1px;margin-top:-.5px;background:#b9b39f;z-index:4}
+.tile .ft,.tile .fb{position:absolute;left:0;right:0;height:50%;overflow:hidden;background:#e6e2d2;z-index:3;backface-visibility:hidden;display:none;will-change:transform}
+.tile .ft{top:0;border-radius:2px 2px 0 0}
+.tile .fb{bottom:0;border-radius:0 0 2px 2px}
+.tile .ft span{top:0}
+.tile .fb span{bottom:0}
+.tile.amber span{color:#b45309}
+.tile.dim span{color:#a3a8b0}
+#main{display:flex;flex:1;min-height:0}
+#map{flex:1;min-width:0;background:#dce8f2}
+#panel{width:380px;background:var(--panel);border-left:1px solid var(--line);overflow-y:auto;padding:14px 16px}
+.bar{position:relative;background:#f1f5f9;border-radius:6px;margin:3px 0;height:22px;cursor:pointer;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;background:#93c5fd;border-radius:6px}
+.bar.sel i{background:var(--acc)}
+.bar span{position:relative;padding:2px 8px;display:inline-block;font-size:12.5px;max-width:75%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar b{position:absolute;right:8px;top:2px;font-size:12px;color:var(--mut)}
+h2{font-size:14px;margin:16px 0 6px}
+h2:first-child{margin-top:0}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 2px}
+.stat{background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--mut)}
+.stat b{display:block;font-size:16px;color:var(--ink)}
+.crumb{font-size:12px;color:var(--mut);margin-bottom:8px}
+.crumb a{color:var(--blu);cursor:pointer;text-decoration:none}
+.glink{font-size:12px;margin-top:6px}
+.glink a{color:var(--blu)}
+.legend{position:absolute;bottom:16px;left:12px;background:#ffffffee;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:11.5px;color:var(--mut);z-index:500}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 4px -1px 8px}
+.mlabel{background:#0f172acc;color:#fff;padding:1px 7px;border-radius:10px;font-size:11px;white-space:nowrap}
+@media (max-width:900px){#main{flex-direction:column}#panel{width:100%;height:45%;border-left:0;border-top:1px solid var(--line)}}
+
+/* ── design polish layer ─────────────────────────────── */
+body{background:linear-gradient(180deg,#f8f6f1,#efece4);font-family:'Open Sans',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+#hdr{background:rgba(253,251,246,.85);backdrop-filter:blur(14px);border-bottom:1px solid #e9e3d6;box-shadow:0 1px 14px rgba(60,50,30,.06);padding:10px 18px}
+#hdr h1{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px}
+#hdr h1::before{content:'✈';display:inline-flex;width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,#d97742,#e8a03e);color:#fff;font-size:15px;align-items:center;justify-content:center;transform:rotate(-45deg);box-shadow:0 2px 6px rgba(217,119,66,.35)}
+.seg{border:0;background:#eef1f5;padding:3px;border-radius:999px;box-shadow:inset 0 1px 3px rgba(15,23,42,.07)}
+.seg button{border-radius:999px;padding:5px 14px;font-weight:600;color:#5b6472;transition:all .18s}
+.seg button.on{background:linear-gradient(135deg,#d97742,#e8a03e);color:#fff;box-shadow:0 2px 8px rgba(217,119,66,.35)}
+.seg button:not(.on):hover{color:#1d4ed8}
+#search{border-radius:999px;padding:10px 18px;font-size:14.5px;min-width:360px;box-shadow:0 2px 8px rgba(15,23,42,.1);transition:box-shadow .18s,border-color .18s}
+#search::placeholder{color:#9aa4b2}
+#search:focus{outline:0;border-color:#93c5fd;box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+#live .dot{animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.5)}70%{box-shadow:0 0 0 7px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+#panel{background:#fdfcf8}
+#panel h2{font-size:10.5px;text-transform:uppercase;letter-spacing:1.5px;color:#8a94a6;margin:20px 0 8px;display:flex;align-items:center;gap:7px;font-weight:700}
+#panel h2::before{content:'';width:14px;height:3px;border-radius:2px;background:linear-gradient(90deg,#1d4ed8,#38bdf8)}
+.stat{background:#fff;border:1px solid #e8ecf1;border-radius:12px;padding:9px 12px;box-shadow:0 1px 4px rgba(15,23,42,.04);transition:transform .15s,box-shadow .15s}
+.stat:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(15,23,42,.09)}
+.stat b{font-size:19px;font-weight:750;font-variant-numeric:tabular-nums}
+.bar{background:#f0f3f7;border-radius:9px;height:26px;margin:4px 0;border:1px solid #eef1f5;transition:transform .12s,box-shadow .12s}
+.bar:hover{transform:translateX(3px);box-shadow:0 2px 6px rgba(15,23,42,.08)}
+.bar i{background:linear-gradient(90deg,#60a5fa,#2563eb);transition:width .5s cubic-bezier(.22,1,.36,1)}
+.bar.sel i{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.now{background:linear-gradient(90deg,#f0fdf4,#fff);border:0;border-left:3px solid #22c55e;border-radius:8px;box-shadow:0 1px 3px rgba(15,23,42,.04);transition:all .15s}
+.now:hover{transform:translateX(3px);box-shadow:0 3px 10px rgba(15,23,42,.08)}
+.lvbox{border-radius:10px;box-shadow:0 2px 10px rgba(180,83,9,.08)}
+.crumb{color:#7b8494}
+.glink a,.crumb a{transition:color .15s}
+.viewfade{animation:viewfade .3s ease}
+@keyframes viewfade{from{opacity:.3;transform:translateY(6px)}to{opacity:1;transform:none}}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#c9d2dd;border-radius:8px;border:2px solid #f6f8fb}
+::-webkit-scrollbar-track{background:transparent}
+#wimgs .stat img{margin:0 0 5px}
+.wimgs .stat{display:inline-block;margin:3px 6px 3px 0}
+#wstar{transition:all .15s;font-weight:600}
+#wstar:hover{border-color:#f59e0b;color:#b45309;background:#fffbeb}
+#boardview{background:linear-gradient(160deg,#e3e7ec,#d3d8df)}
+#bsnd,#bsnd.on{border-radius:999px}
+.chead span{padding-left:2px}
+
+/* Airport wayfinding: quiet surfaces, ink typography, signal yellow. */
+:root{--blu:#254d48;--acc:#e5b52f}
+button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:3px solid #d39e16;outline-offset:3px}
+#hdr{background:#f8f7f2;box-shadow:none;border-bottom:1px solid #cccac0}#hdr h1{font-size:16px}#search{min-width:220px;border-radius:3px;box-shadow:none;font-size:13px}.seg{border-radius:3px}.seg button.on{background:#254d48}#live{color:#54645c}
+#boardview{background:#eae9e2;padding:24px}#board{overflow-x:auto;padding:16px;background:#252a28;border:1px solid #161c19;border-radius:3px;min-height:100px}.chead span{color:#d1ceba}.brow{width:max-content}.brow:focus-visible{outline-offset:1px}.brow>div:not(.tile),.chead>div{flex-shrink:0}.tile .ft span,.tile .fb span{position:absolute;left:0;width:100%;height:40px;text-align:center;font:700 25px/40px ui-monospace,Menlo,monospace;color:#16181d}.tile .ft{transform-origin:center bottom}.tile .fb{transform-origin:center top}.tile.amber span{color:#a55300}
+.board-tools{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 14px}.board-tools input,.board-tools select,.board-tools button,#homebtn{padding:8px 12px;border:1px solid #bcbfb6;background:#faf9f4;border-radius:3px}.board-tools input{flex:1;min-width:180px}#boardcount{color:#59635c;font-size:12px;margin-right:auto}#boardempty{padding:36px;color:#f6f2dd}#btitle{letter-spacing:1.5px}#bhint{color:#536359}
+#intro{position:fixed;inset:0;z-index:4000;background:#f4f2e9;overflow:auto;color:#202d29}#intro.gone{display:none}#intromap{position:absolute;top:0;right:0;width:43%;height:100%;opacity:.85;background:#c3cbc0}#intromap .leaflet-tile{filter:grayscale(.55) saturate(.6)}.i-shade{position:absolute;inset:0;background:linear-gradient(90deg,#f4f2e9 53%,transparent 85%);pointer-events:none}.i-wrap{position:relative;max-width:1280px;width:90%;margin:auto;padding:30px 0}.i-top{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-bottom:24px;border-bottom:1px solid #aeb5a7}.i-kicker{font:700 11px ui-monospace,monospace;letter-spacing:1.5px}.i-greet{font:500 clamp(52px,7vw,94px)/.98 Georgia,serif;letter-spacing:-3px;max-width:650px;margin:50px 0 22px}.i-sub{max-width:460px;color:#5c655d;font-size:16px;line-height:1.65;margin:20px 0 24px}.i-flaps{display:flex;gap:4px;margin:24px 0}.i-choose{display:grid;grid-template-columns:repeat(2,1fr);max-width:660px;margin-top:30px;border-top:1px solid #aeb5a7}.ichoose-card{display:flex;align-items:center;gap:16px;text-align:left;background:#f4f2e9ed;border:0;border-bottom:1px solid #bfc3b6;padding:20px 12px;color:#202d29}.ichoose-card:hover{background:#e6bc42}.ichoose-card b{font-size:15px;font-weight:500}.i-num{font:11px ui-monospace,monospace;color:#647166}.i-foot{font:10px/1.8 ui-monospace,monospace;color:#657367;margin-top:28px;max-width:650px}#ienter{background:#233f36;color:#fff;border:0;padding:14px 24px;border-radius:2px}.i-strip{max-width:660px;margin-top:28px;background:#f4f2e9e8}.i-strip h2{font:700 11px ui-monospace,monospace;letter-spacing:2px}.ir{display:flex;justify-content:space-between;gap:12px;font:12px ui-monospace,monospace;padding:9px 0;border-bottom:1px solid #ced0c4}.ig{color:#52633b}#iclock{margin:0}#iclock .tile{width:20px;height:32px}#iclock .tile span{font-size:19px;line-height:32px;height:32px}
+@media(max-width:700px){#iflaps .tile{width:23px}#iflaps{gap:3px}.i-wrap{width:90%;padding-top:20px}.i-top{align-items:flex-start;flex-direction:column}.i-greet{margin-top:30px;letter-spacing:-2px}.i-choose{grid-template-columns:1fr 1fr}.ichoose-card{padding:17px 6px;gap:8px}.ichoose-card b{font-size:13px}#intromap{width:100%;height:280px;opacity:.15}.i-shade{display:none}#boardview{padding:12px}#hdr{gap:8px}#search{min-width:0;width:100%}#bclock{display:none}#panel,#taxipanel,#flowside{width:44%;padding:10px}#btitle{font-size:11px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+#board{--tw:clamp(16px,1.42vw,26px);--th:clamp(28px,2.2vw,40px);flex-shrink:0}#board .tile{width:var(--tw);height:var(--th)}#board .tile span{height:var(--th);line-height:var(--th);font-size:clamp(17px,1.65vw,25px)}#board .brow,#board .chead{gap:3px}#board .chead{width:max-content}#board .chead span{flex:none}#boardempty{color:#435549}#hdr h1::before{display:none}.seg button{border-radius:0!important}#bsnd{border-radius:3px}#intro .tile{flex-shrink:0}
+#boardview{background:#ecece4}#board{background:#202623;border-color:#111614}.tile .h{background:#f2efe4;box-shadow:inset 0 0 0 1px #d8d2bf}.tile .h.t{border-bottom-color:#bfb79f}.tile .ft,.tile .fb{background:#e3ddca}.tile .seam{background:#aaa28b}.tile.st-boarding span,.tile.st-final-call span,.tile.st-gate-closed span,.tile.st-gate-chgd span{color:#236044}.tile.st-delayed span{color:#946300}.tile.st-cancelled span{color:#a0392d}.tile.st-departed span,.tile.dim span{color:#8b918c}.bar i{background:#7fa398}.bar.sel i{background:#d7aa2d}
+</style>
+</head>
+<body>
+<div id="intro">
+  <div id="intromap"></div>
+  <div class="i-shade"></div>
+  <div class="i-wrap">
+    <div class="i-top">
+      <div class="i-kicker">OVERVIEW &mdash; HONG KONG INTERNATIONAL AIRPORT &middot; VHHH</div>
+      <div class="bclock" id="iclock"></div>
+    </div>
+
+    <h1 class="i-greet">Hong Kong<br>International Airport<br>Manager</h1>
+    <div class="i-flaps" id="iflaps"></div>
+    <button id="ienter">Open departures ↗</button>
+    <div class="i-choose">
+      <button class="ichoose-card" data-v="board"><span class="i-num">01</span><b>Departure board</b></button>
+      <button class="ichoose-card" data-v="board" data-bd="A"><span class="i-num">02</span><b>Arrival board</b></button>
+      <button class="ichoose-card" data-v="map"><span class="i-num">03</span><b>Live apron</b></button>
+      <button class="ichoose-card" data-v="taxi"><span class="i-num">04</span><b>Taxi routes</b></button>
+      <button class="ichoose-card" data-v="3d"><span class="i-num">05</span><b>3D view</b></button>
+      <button class="ichoose-card" data-v="flow"><span class="i-num">06</span><b>Approaches</b></button>
+    </div>
+    <section class="i-strip"><h2>NEXT DEPARTURES · HONG KONG TIME</h2><div id="istrip"></div></section>
+    <div class="i-foot">Made in Hong Kong &nbsp;&middot;&nbsp; 22&deg;18&prime;N 113&deg;54&prime;E &nbsp;&middot;&nbsp; imagery &copy; Esri &middot; gates as published by HKIA &middot; live ADS-B &middot; AeroDataBox</div>
+  </div>
+</div><div id="app" inert>
+  <div id="hdr">
+    <button id="homebtn" aria-label="Airport overview">HKG ↗</button><h1>Airport Manager</h1>
+    <div class="win" id="win"></div>
+    <div class="seg" id="viewseg">
+      <button data-v="board" class="on">BOARD</button>
+      <button data-v="map">MAP</button>
+      <button data-v="taxi">TAXI</button>
+      <button data-v="3d">3D</button>
+      <button data-v="flow">APPROACHES</button>
+    </div>
+    <input id="search" list="ac" placeholder="Search airline or flight…">
+    <datalist id="ac"></datalist>
+    <div id="live"><span class="dot"></span><span id="livetext">connecting…</span></div>
+  </div>
+  <div id="main">
+    <div id="boardview">
+      <div id="bhead">
+        <span id="btitle">HONG KONG INTERNATIONAL AIRPORT · DEPARTURES</span>
+        <div class="bclock" id="bclock"></div>
+        <input type="date" id="repdate" style="padding:4px 8px;border-radius:8px;border:1px solid #cbd5e1;font-size:12px">
+        <button id="repgob" style="background:#1d4ed8;color:#fff;border:0;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;font-weight:600">REPLAY</button>
+        <button id="repexit" style="display:none;background:#b91c1c;color:#fff;border:0;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;font-weight:600">EXIT REPLAY</button>
+        <div class="seg" id="bdirseg">
+          <button data-bd="D" class="on">DEP</button>
+          <button data-bd="A">ARR</button>
+        </div>
+        <span id="bhint">click a row to locate on map</span>
+        <button id="bsnd">SOUND OFF</button>
+      </div>
+      <div class="board-tools"><input id="boardfilter" type="search" aria-label="Filter flights" placeholder="Flight, airline, destination or gate"><select id="statusfilter" aria-label="Filter status"><option value="">All statuses</option><option>BOARDING</option><option>DELAYED</option><option>CANCELLED</option><option>SCHEDULED</option><option>ARRIVED</option></select><button id="clearfilters">Clear</button></div>
+      <div class="board-tools"><span id="boardcount" role="status"></span><button id="prevpage">← Previous</button><button id="nextpage">Next →</button></div>
+      <div id="board"></div><div id="boardempty" hidden>No flights match these filters.</div>
+    </div>
+    <div id="mapview">
+      <div id="map"><div class="legend" id="legend"></div></div>
+      <div id="panel"></div>
+    </div>
+    <div id="threeview">
+      <div id="threewrap"></div>
+      <div id="geobar">
+        <input id="geokey" placeholder="paste Google Maps API key (AIza&hellip;, Map Tiles API) or Cesium ion token for photoreal Google Earth 3D" style="flex:1">
+        <button id="geosave">USE PHOTOREAL</button>
+        <button id="geostylized">STYLIZED</button>
+        <span id="geostat"></span>
+      </div>
+      <div id="threehint">drag to orbit &middot; scroll to zoom &middot; amber pillars = gates with departures today</div>
+    </div>
+    <div id="flowview">
+      <div id="flowmap"></div>
+      <div id="flowside">
+        <h2 style="margin-top:0">Approaches</h2>
+        <p class="crumb">Live ADS-B trails (last ~45 min) into and out of VHHH, over the navaid network (VOR/DME/NDB). Amber = departures, blue = arrivals.</p>
+        <div id="flowstats" class="stats"></div>
+        <div style="margin:8px 0">
+          <label style="font-size:12.5px"><input type="checkbox" id="tgltrails" checked> live ADS-B trails</label> &nbsp;
+          <label style="font-size:12.5px"><input type="checkbox" id="tglarcs"> planned routes (origin → HKG)</label>
+        </div>
+        <div id="arclist" class="crumb"></div>
+        <h2>Procedure charts</h2>
+        <div class="crumb" style="margin-bottom:6px">Jeppesen VHHH package (Feb 2008 rev — <b>expired</b>). ⚠ Runways renumbered with the 3-runway project: 2009 <b>25R</b>(south)→today <b>25L</b> · 2009 <b>25L</b>(north)→today <b>25C</b> · today <b>25R</b> = the new north runway (no 2009 counterpart)</div>
+        <p class="crumb">Chart PDF is unavailable in this installation.</p>
+        <div id="fixchips" class="crumb" style="margin-top:8px"></div>
+        <div id="choverlap" class="crumb" style="margin-top:8px"></div>
+        <h2>Navaids / waypoints</h2>
+        <div id="navlist" class="crumb"></div>
+      </div>
+    </div>
+    <div id="taxiview">
+      <div id="taximap"></div>
+      <div id="taxipanel">
+        <h2 style="margin-top:0">Taxi route estimator</h2>
+        <p class="crumb">Shortest path along the real taxiway network (OSM), calibrated with 49,820 observed gate&rarr;wheels-up times from the 91-day archive.</p>
+        <label style="font-size:13px">Gate<br><select id="tg" style="width:100%;padding:5px;margin:4px 0 10px"></select></label>
+        <label style="font-size:13px">Runway<br><select id="tr" style="width:100%;padding:5px;margin:4px 0 6px"><option value="">auto — predicted in use</option></select></label>
+        <div id="rwyinfo" class="crumb" style="margin:0 0 10px">runway prediction: gathering ADS-B…</div>
+        <div id="flowwx" class="stats" style="margin:0 0 10px"></div>
+        <div id="tinfo"></div>
+        <h2>Observed taxi-out by hour</h2>
+        <div id="thours"></div>
+        <p class="crumb" style="margin-top:10px">Actual routing depends on runway-in-use and ATC; estimates only.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+const DATA=JSON.parse(document.getElementById('data').textContent);
+const AIR=DATA.meta.airlines,GATES=DATA.gates,AIRPORTS=DATA.airports||{};
+const state={sel:null};
+const K='D-pax';
+const gateTotals=()=>DATA.combos[K].gt;
+const gateAirlines=g=>DATA.combos[K].ag[g]||{};
+const airlineGates=a=>DATA.combos[K].ga[a]||{};
+const flightInfo=f=>{const e=DATA.combos[K].fl[f];return e?{a:e.a,g:e.g,t:Object.values(e.g).reduce((s,v)=>s+v,0)}:null;};
+const allFlights=()=>Object.entries(DATA.combos[K].fl).map(([f,e])=>({f,a:e.a,g:e.g,t:Object.values(e.g).reduce((s,v)=>s+v,0)}));
+const fmt=n=>n.toLocaleString('en-US');
+const heat=t=>{const a=[219,234,254],b=[29,78,216];return`rgb(${a.map((v,i)=>Math.round(v+(b[i]-v)*t)).join(',')})`;};
+const LIVE={rows:DATA.live?.rows||[],trails:[],ts:(DATA.live?.ts||0)*1000,mode:DATA.live?.rows?.length?'snapshot':'archive',pairs:{}};
+function modalGate(a){const c=DATA.combos[K].ga[a]||{};let bg=null,bn=0;for(const g in c)if(c[g]>bn){bn=c[g];bg=g;}return bg;}
+LIVE.extArr=DATA.live?.extArr||{};
+function normGate(g){if(!g)return g;const m=/^[A-Za-z]?\s*(\d{1,3})$/.exec(String(g).trim());return m?m[1]:g;}
+function arrGate(r){
+  if(LIVE.pairs[r.f]&&LIVE.pairs[r.f].gate)return normGate(LIVE.pairs[r.f].gate);
+  if(LIVE.extArr[r.f]&&LIVE.extArr[r.f].gate)return normGate(LIVE.extArr[r.f].gate);
+  return modalGate(r.airline);
+}
+function arrSrc(r){
+  if(LIVE.pairs[r.f])return'ADS-B pairing';
+  if(LIVE.extArr[r.f])return'AeroDataBox feed';
+  return'airline cluster estimate';
+}
+const liveFor=f=>LIVE.rows.filter(r=>r.f===f);
+const liveAt=g=>LIVE.rows.filter(r=>r.gate===g);
+const hkDate=d=>d.toLocaleDateString('sv',{timeZone:'Asia/Hong_Kong'});
+const tk=()=>hkDate(new Date());
+const hkClock=()=>new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Hong_Kong',hour12:false});
+const fresh=r=>{const m=/Dep (\d{2}:\d{2})/.exec(r.status);if(!m)return true;
+  return Date.now()-new Date(r.date+'T'+m[1]+':00+08:00').getTime()<45*60000;};
+const boardToday=()=>LIVE.rows.filter(r=>r.dir==='D'&&r.gate&&r.date===tk()&&fresh(r));
+const rel=ts=>{const s=Math.max(0,Math.round((Date.now()-ts)/1000));return s<90?s+'s ago':Math.round(s/60)+'m ago';};
+function badge(){
+  const el=document.getElementById('live'),tx=document.getElementById('livetext');
+  el.className='';
+  if(LIVE.mode==='live'){el.classList.add('ok');tx.textContent='LIVE · updated '+rel(LIVE.ts);}
+  else if(LIVE.mode==='snapshot'){el.classList.add('snap');tx.textContent='build-time snapshot · run hkia_live_server.py for live';}
+  else if(LIVE.mode==='replay')tx.textContent='Historical archive';
+  else tx.textContent='archive only · run hkia_live_server.py for live';
+}
+let REPLAY=false;
+async function poll(){
+  if(REPLAY)return;
+  try{const r=await fetch('api/live',{cache:'no-store'});if(!r.ok)throw 0;
+    const d=await r.json();if(REPLAY)return;if(d.error||!Array.isArray(d.rows))throw 0;
+    LIVE.rows=d.rows;LIVE.ts=d.ts*1000;LIVE.mode='live';
+    if(d.types)Object.assign(TYPES,d.types);
+    if(d.pairs)LIVE.pairs=d.pairs;
+    if(d.extArr)LIVE.extArr=d.extArr;
+    if(d.wx){LIVE.wx=d.wx;renderWx();}
+  checkWatch();
+    if(d.runway){LIVE.runway=d.runway;updateRwyInfo();}
+  if(d.trails){LIVE.trails=d.trails;
+    if(TAXIMAP)drawTrails(d.trails,TAXIMAP,TRAILLINES.taxi);
+    if(FLOWMAP)drawTrails(d.trails,FLOWMAP,FLOWLINES.flow);
+    drawMapTraf(d.trails);}
+  }catch(e){LIVE.mode=LIVE.rows.length?'snapshot':'archive';}
+  badge();render();
+  if(VIEW==='board')boardRender();else boardDirty=true;
+  if(!state.sel)select(null);
+}
+const nameOf=a=>AIR[a]||a;
+
+const map=L.map('map',{zoomControl:true}).setView([22.3125,113.9265],14);
+const STYLE={runway:{color:'#3d4a5c',fillColor:'#3d4a5c',fillOpacity:.95,weight:1},
+taxiway:{color:'#8fa3b8',weight:2.5},
+apron:{color:'#d3dde8',fillColor:'#e9eef4',fillOpacity:1,weight:1},
+building:{color:'#b6c3d1',fillColor:'#ccd7e2',fillOpacity:1,weight:.6},
+terminal:{color:'#334155',fillColor:'#8296ab',fillOpacity:.95,weight:1},
+construction:{color:'#64748b',fillColor:'#cbd5e1',fillOpacity:.45,weight:1,dashArray:'5 4'},
+hangar:{color:'#b6c3d1',fillColor:'#ccd7e2',fillOpacity:1,weight:.6}};
+L.geoJSON(DATA.geo,{style:f=>STYLE[f.properties.k]||{}}).addTo(map);
+for(const[t,[la,lo]]of Object.entries(DATA.labels)){if(!la)continue;L.marker([la,lo],{icon:L.divIcon({className:'',html:`<div class="mlabel">${t}</div>`,iconSize:null}),interactive:false}).addTo(map);}
+
+const MAPTRAF=L.layerGroup().addTo(map);
+let TRAFON=true;
+function drawMapTraf(trails){
+  MAPTRAF.clearLayers();
+  if(!TRAFON)return;
+  for(const t of trails||[]){
+    if(!t.pts||!t.pts.length)continue;
+    const p=t.pts[t.pts.length-1];
+    const col=t.dir==='dep'?'#f59e0b':(t.dir==='arr'?'#1d4ed8':'#7d8ca3');
+    const route=(DATA.csRoutes||{})[t.cs]||'';
+    L.circleMarker([p[0],p[1]],{radius:4,color:'#fff',weight:1,fillColor:col,fillOpacity:.95})
+      .bindTooltip(`${t.cs}${t.t?' · '+t.t:''} ${route?'→ '+route:''} · ${Math.round(p[2]||0)} ft`)
+      .addTo(MAPTRAF);
+  }
+}
+const MK={};
+for(const[g,info]of Object.entries(GATES)){
+  const m=L.circleMarker([info.lat,info.lon],{radius:7,color:'#fff',weight:1.5,fillOpacity:.95}).addTo(map);
+  m.on('click',()=>select({type:'gate',id:g}));
+  m.bindTooltip(g,{direction:'top'});
+  MK[g]=m;
+}
+function render(){
+  const tot=gateTotals(),max=Math.max(1,...Object.values(tot));
+  const occ=new Set(boardToday().map(r=>r.gate));
+  let hl=null,weights={};
+  if(state.sel?.type==='gate')hl={[state.sel.id]:1};
+  if(state.sel?.type==='airline')weights=airlineGates(state.sel.id);
+  if(state.sel?.type==='flight'){const i=flightInfo(state.sel.id);if(i)weights=i.g;}
+  const selMode=state.sel&&state.sel.type!=='gate';
+  const wmax=Math.max(1,...Object.values(weights));
+  for(const[g,m]of Object.entries(MK)){
+    const t=tot[g]||0;
+    if(state.sel?.type==='gate'){
+      m.setStyle({radius:g===state.sel.id?13:5,fillColor:g===state.sel.id?'#f59e0b':(t?heat(t/max):'#d1d5db'),fillOpacity:g===state.sel.id?1:(t?.85:.5)});
+    }else if(selMode){
+      const w=weights[g]||0;
+      m.setStyle({radius:w?7+Math.sqrt(w/wmax)*9:4,fillColor:w?'#f59e0b':'#d1d5db',fillOpacity:w?.95:.45});
+    }else{
+      m.setStyle({radius:6+Math.sqrt(t/max)*10,fillColor:t?heat(t/max):'#d1d5db',fillOpacity:t?.95:.45,
+        color:occ.has(g)?'#b45309':'#fff',weight:occ.has(g)?3:1.5,dashArray:occ.has(g)?'3 3':''});
+    }
+  }
+}
+function bars(entries,total,attr,selKey,limit=10){
+  total=Math.max(1,total);
+  return Object.entries(entries).sort((x,y)=>y[1]-x[1]).slice(0,limit).map(([k,v])=>{
+    const pct=Math.round(v*100/total);
+    const sel=selKey&&String(selKey)===String(k)?' sel':'';
+    const lbl=attr==='data-airline'?`${k} · ${nameOf(k)}`:k;
+    return`<div class="bar${sel}" ${attr}="${k}"><i style="width:${pct}%"></i><span>${lbl}</span><b>${fmt(v)} · ${pct}%</b></div>`;
+  }).join('');
+}
+function wire(panel){
+  panel.querySelectorAll('.reglink').forEach(e=>e.onclick=()=>select({type:'reg',id:e.dataset.reg}));
+  panel.querySelectorAll('[data-gate]').forEach(e=>e.onclick=()=>select({type:'gate',id:e.dataset.gate}));
+  panel.querySelectorAll('[data-airline]').forEach(e=>e.onclick=()=>select({type:'airline',id:e.dataset.airline}));
+  panel.querySelectorAll('[data-flight]').forEach(e=>e.onclick=()=>select({type:'flight',id:e.dataset.flight}));
+}
+function fly(g){const i=GATES[g];if(i)map.flyTo([i.lat,i.lon],17,{duration:.6});}
+function select(sel){
+  state.sel=sel;render();
+  const p=document.getElementById('panel');
+  if(!sel){overview(p);renderWx();return;}
+  if(sel.type==='gate')gatePanel(p,sel.id);
+  if(sel.type==='airline')airlinePanel(p,sel.id);
+  if(sel.type==='flight')flightPanel(p,sel.id);
+  if(sel.type==='dest')destPanel(p,sel.id);
+  if(sel.type==='reg')regPanel(p,sel.id);
+  p.scrollTop=0;
+}
+function overview(p){
+  const tot=gateTotals(),gt=Object.entries(tot).sort((a,b)=>b[1]-a[1]);
+  const grand=gt.reduce((s,[,v])=>s+v,0);
+  const agg={};for(const[g]of gt){for(const[a,v]of Object.entries(gateAirlines(g)))agg[a]=(agg[a]||0)+v;}
+  const flights=allFlights().filter(x=>x.t>=15).map(x=>({x,share:Math.max(...Object.values(x.g))/x.t})).sort((a,b)=>b.share-a.share||b.x.t-a.x.t).slice(0,10);
+  p.innerHTML=`<div id="wxstrip" class="stats"></div>
+    <div class="stats">
+    <div class="stat"><b>${fmt(grand)}</b>gate movements</div>
+    <div class="stat"><b>${gt.filter(([,v])=>v>0).length}</b>gates used</div>
+    <div class="stat"><b>${Object.keys(agg).length}</b>airlines</div></div>
+    <h2>On the boards now</h2>${boardToday().sort((a,b)=>a.time.localeCompare(b.time)).slice(0,15).map(r=>`<div class="now" data-gate="${r.gate}"><b>${r.time} ${r.f}</b> &rarr; ${r.dest} · Gate ${r.gate}<span class="st">${r.status}</span></div>`).join('')||'<p class="crumb">No departures currently on the boards (or no live feed — run hkia_live_server.py).</p>'}
+    <h2>Arriving — gates</h2>${(()=>{const a=LIVE.rows.filter(r=>r.dir==='A'&&r.date===tk()).sort((x,y)=>x.time.localeCompare(y.time)).slice(0,10);
+      return a.map(r=>{const eg=arrGate(r);const fed=(LIVE.extArr[r.f]||LIVE.pairs[r.f])?'':'~';const belt=(LIVE.extArr[r.f]||{}).belt;
+        const ld=landedOf(r);
+        return `<div class="now" data-flight="${r.f}"><b>${r.time} ${r.f}</b> from ${r.dest}<span class="st">${ld?'landed '+ld:(eg?fed+eg:'est…')}${belt?' · belt '+belt:''}</span></div>`;}).join('')||'<p class="crumb">No arrivals on the boards.</p>';})()}
+    <h2>Turnarounds</h2>${(()=>{const arrs=LIVE.rows.filter(r=>r.dir==='A'&&r.date===tk());
+      const items=[];
+      for(const[f,pr]of Object.entries(LIVE.pairs)){
+        const a=arrs.find(x=>x.f===f);if(!a)continue;
+        const d=boardToday().find(x=>x.f===pr.next);if(!d)continue;
+        const[ah,am]=a.time.split(':').map(Number);const[dh,dm]=d.time.split(':').map(Number);
+        const now=new Date();const nm=now.getHours()*60+now.getMinutes();
+        const left=(dh*60+dm)-nm;
+        items.push({f,reg:REGS[f],next:pr.next,gate:pr.gate,left});
+      }
+      items.sort((x,y)=>x.left-y.left);
+      return items.slice(0,8).map(x=>`<div class="now" data-flight="${x.next}"><b>${x.next}</b> ${x.reg?'('+x.reg+') ':''}→ Gate ${x.gate}<span class="st">off-block in ${Math.max(0,x.left)}m</span></div>`).join('')||'<p class="crumb">No paired turnarounds yet — pairs build as ADS-B sightings accumulate.</p>';})()}
+    <h2>Destinations today</h2>${(()=>{const c={};boardToday().forEach(r=>{const city=cityOf(r);c[city]=(c[city]||0)+1;});
+      const top=Object.entries(c).sort((a,b)=>b[1]-a[1]).slice(0,12);
+      return top.map(([city,n])=>`<div class="bar" data-dest="${city}"><i style="width:${Math.round(n*100/Math.max(1,boardToday().length))}%"></i><span>${city}</span><b>${n}</b></div>`).join('');})()}
+    <h2>Busiest gates</h2>${bars(Object.fromEntries(gt),grand,'data-gate',null,12)}
+    <h2>Top airlines</h2>${bars(agg,grand,'data-airline',null,15)}
+    <h2>Most gate-loyal flights</h2>${flights.map(({x,share})=>`<div class="bar" data-flight="${x.f}"><i style="width:${Math.round(share*100)}%"></i><span>${x.f} · ${nameOf(x.a)}</span><b>${Math.round(share*100)}%</b></div>`).join('')}
+    ${(()=>{const tc={};Object.values(TYPES).forEach(t=>tc[t]=(tc[t]||0)+1);
+      const tt=Object.entries(tc).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([t,n])=>t+' ×'+n).join(' · ');
+      return tt?`<h2>Commonest aircraft types</h2><p class="crumb" style="margin:2px 0">${tt} <span style="color:#8a909b">— observed on live ADS-B around HKG, coverage grows while the server polls</span></p>`:'';})()}
+    <h2>Weekly departure pattern</h2>${(()=>{const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+      const mx=Math.max(1,...DATA.week.flat());
+      let t='<div style="display:grid;grid-template-columns:repeat(24,1fr);gap:1px;font-size:9px">';
+      t+='<div></div>'+Array.from({length:24},(_,h)=>`<div style="text-align:center;color:#94a3b8">${h}</div>`).join('');
+      DATA.week.forEach((row,di)=>{
+        t+=`<div style="color:#94a3b8">${days[di]}</div>`+row.map((v,h)=>{const a=Math.round(v/mx*100);
+          return `<div title="${days[di]} ${h}:00 — ${v} dep" style="height:12px;background:rgba(29,78,216,${(v/mx*0.9+0.05).toFixed(2)})"></div>`;}).join('');
+      });
+      return t+'</div>';})()}
+    <p class="crumb" style="margin-top:14px">Note: Terminal 2 has no gates yet — T2-tagged flights check in at the new T2 and board from Midfield (201–219) and remote/bus stands. The dashed outline north of T2 is the future T2 Concourse.</p>`;
+  wire(p);
+}
+function gatePanel(p,g){
+  const tot=gateTotals(),t=tot[g]||0,grand=Object.values(tot).reduce((s,v)=>s+v,0);
+  const al=gateAirlines(g),i=GATES[g]||{lat:null,lon:null,area:'unknown'};
+  const fls=allFlights().filter(x=>x.g[g]).sort((a,b)=>b.g[g]-a.g[g]).slice(0,10).map(x=>[x.f,x.g[g]]);
+  p.innerHTML=`<div class="crumb"><a onclick="select(null)">&larr; overview</a></div>
+    <h2>Gate ${g}</h2>
+    <div class="stats"><div class="stat"><b>${fmt(t)}</b>movements</div>
+    <div class="stat"><b>${Math.round(t*100/Math.max(1,grand))}%</b>of airport</div>
+    <div class="stat"><b>${i.area}</b>area</div></div>
+    ${i.lat?`<div class="glink"><a href="https://maps.google.com/?q=${i.lat},${i.lon}" target="_blank">open in Google Maps &#8599;</a></div>`:''}
+    <h2>Gate timeline (yesterday)</h2>
+    <div id="ggantt" style="position:relative;height:26px;background:#f0f3f7;border-radius:8px;overflow:hidden"></div>
+    <div id="gganttinfo" class="crumb" style="margin-top:4px"></div>
+    <h2>At this gate now</h2><div id="gatnow" class="crumb">checking…</div>
+    <div id="gphoto" style="margin-top:10px"></div>
+    <div id="adbxbox" class="crumb" style="margin-top:10px"></div>
+    <h2>Usual airlines</h2>${bars(al,t,'data-airline',null,10)}
+    <h2>Frequent flights</h2>${bars(Object.fromEntries(fls),Math.max(1,t),'data-flight',null,10)}`;
+  wire(p);
+  fetch('api/day?date='+hkDate(new Date(Date.now()-86400000)),{cache:'no-store'})
+    .then(r=>r.json()).then(j=>{
+      const el=document.getElementById('ggantt');if(!el)return;
+      const mv=(j.rows||[]).filter(x=>x.gate===g);
+      if(!mv.length){document.getElementById('gganttinfo').textContent='no archived movements at this gate yesterday';return;}
+      mv.forEach(m2=>{
+        const pr=m2.time.split(':').map(Number);
+        const b=document.createElement('div');
+        b.style.cssText=`position:absolute;left:${(pr[0]*60+pr[1])/1440*100}%;top:0;height:100%;width:1.4%;background:linear-gradient(90deg,#2563eb,#60a5fa);opacity:.9`;
+        b.title=m2.time+' '+m2.f+' → '+m2.dest;
+        el.appendChild(b);
+      });
+      document.getElementById('gganttinfo').textContent=mv.length+' movements · bars = scheduled departure time (00:00 → 24:00)';
+    }).catch(()=>{});
+  const cur=boardToday().filter(r=>r.gate===g).sort((a,b)=>a.time.localeCompare(b.time))[0];
+  if(!cur){document.getElementById('gatnow').textContent='no scheduled departures at this gate right now';
+    document.getElementById('adbxbox').textContent='';return;}
+  document.getElementById('gatnow').innerHTML=`<div class="now" data-flight="${cur.f}"><b>${cur.time} ${cur.f}</b> &rarr; ${cur.dest}<span class="st">${cur.status}</span></div>`;
+  const box=document.getElementById('adbxbox');
+  box.innerHTML='fetching flight detail…';
+  const rk=delayRisk({airline:cur.airline,time:cur.time});
+  fetch('api/adbx?fno='+encodeURIComponent(cur.f)+'&date='+encodeURIComponent(cur.date),{cache:'no-store'})
+    .then(r=>r.json()).then(d=>{
+      if(!state.sel||state.sel.type!=='gate'||state.sel.id!==g)return;
+      const med=(TX.byGate[g]||[])[0];
+      let takeoff='';
+      try{
+        const base=d.revised||d.sched;
+        if(base){const m=/T(\d{2}:\d{2})/.exec(base);
+          if(m){const[h2,m2]=m[1].split(':').map(Number);
+            const add=Math.round((med||14)+Math.max(0,d.delay||0));
+            const tt=(h2*60+m2+add)%1440;
+            takeoff=` · est. takeoff ~${String(Math.floor(tt/60)).padStart(2,'0')}:${String(tt%60).padStart(2,'0')} (+${add} min taxi+delay)`;}}
+      }catch(e){}
+      const delay=d.delay!=null?(d.delay>0?`${d.delay} min late`:d.delay<0?`${-d.delay} min early`:'on time'):'';
+      const pd=predDelay(cur);
+      const pdd=pd!=null?` · model predicts ~${Math.max(0,Math.round(pd))} min delay`:'';
+      if(d.reg)REGS[cur.f]=d.reg;
+      box.innerHTML=`<b>${cur.f} — ${cur.dest}</b><br>`+
+        (d.model?`Aircraft: <b>${esc(d.model)}</b>${d.reg?' · <span class="reglink" data-reg="'+esc(d.reg)+'" style="cursor:pointer;color:var(--blu);text-decoration:underline">'+esc(d.reg)+'</span>':''}<br>`:'')+
+        `Status: ${d.status||'?'}${delay?` · <b style="color:${d.delay>15?'#b45309':'#15803d'}">${delay}</b>`:''}${pdd}${takeoff}<br>`+
+        `<span style="font-size:11px">${rk.lvl!=='LOW'?'':(LIVE.wx&&LIVE.wx.lightning)?'':''}delay risk <b style="color:${rk.col}">${rk.lvl}</b> (~${rk.est} min)</span>`;
+      wire(p);
+      if(d.reg)loadPhoto(d.reg,'gphoto');
+    }).catch(()=>{box.textContent='detail unavailable';});
+}
+
+function flightPanel(p,f){
+  const i=flightInfo(f);
+  const lva=liveFor(f).find(r=>r.dir==='A');
+  const arrBox=lva?(()=>{const pr=LIVE.pairs[f];const eg=arrGate(lva);const src=arrSrc(lva);
+    const pub=pr||LIVE.extArr[f];
+    const ld=landedOf(lva)||'';
+    const belt=(LIVE.extArr[f]||{}).belt;
+    return`<div class="lvbox"><b>ARRIVAL</b> from ${lva.dest} · ${lva.status} · sched ${lva.time}${ld?' · <b>landed '+ld+'</b>':''} · gate ${eg?'<b>'+eg+'</b>':'—'}${belt?' · baggage belt <b>'+belt+'</b>':''} · <span style="color:#8a909b">${src}${pub?'':' (estimate — HKIA does not publish arrival gates)'}</span>${eg?` · <a style="cursor:pointer;color:var(--blu)" data-gate="${eg}">locate</a>`:''}</div>`;})():'';
+  if(!i&&lva){p.innerHTML=`<div class="crumb"><a onclick="select(null)">&larr; overview</a></div><h2>${esc(f)} <span style="color:var(--mut);font-weight:400">· arrival</span></h2>${arrBox}`;wire(p);return;}
+  if(!i){p.innerHTML=`<div class="crumb"><a onclick="select(null)">&larr; overview</a></div><p>No gate records for ${esc(f)} in this view.</p>`;return;}
+  const lv=liveFor(f).filter(r=>r.dir==='D'&&r.gate).sort((a,b)=>(b.date===tk())-(a.date===tk()))[0];
+  const ty=TYPES[f],rg=REGS[f];
+  const depRow=liveFor(f).find(r=>r.dir==='D')||{time:'12:00',date:tk(),airline:i.a};
+  const rk=delayRisk({airline:i.a,time:depRow.time});
+  const top=Object.values(i.g).length?Math.max(...Object.values(i.g)):0;
+  p.innerHTML=`<div class="crumb"><a onclick="select(null)">&larr; overview</a></div>
+    <h2>${esc(f)} <span style="color:var(--mut);font-weight:400">· ${nameOf(i.a)}</span></h2>
+    ${arrBox}
+    ${lv?`<div class="lvbox"><b>${REPLAY?'ARCHIVE':'DEPARTURE'}</b> Gate ${esc(lv.gate)} · ${esc(lv.status)} · scheduled ${esc(lv.time)} · <a style="cursor:pointer;color:var(--blu)" data-gate="${esc(lv.gate)}">locate on map</a></div>`:''}
+    <div style="margin:6px 0"><span style="background:${rk.col};color:#fff;border-radius:999px;padding:2px 10px;font-size:11px;font-weight:700">delay risk ${rk.lvl} · ~${rk.est} min</span></div>
+    ${ty?`<p class="crumb" style="margin:2px 0 8px">Usual aircraft: <b style="color:var(--ink)">${ty}</b>${rg?' · last seen '+rg:''} <span style="color:#8a909b">(live ADS-B)</span></p>`:''}
+    <div class="stats"><div class="stat"><b>${fmt(i.t)}</b>recorded movements</div>
+    <div class="stat"><b>${Object.keys(i.g).length}</b>different gates</div>
+    <div class="stat"><b>${Math.round(top*100/i.t)}%</b>at usual gate</div></div>
+    <h2>Gate history — click to locate</h2>${bars(i.g,i.t,'data-gate',null,12)}
+    <div id="pphoto" style="margin-top:10px"></div>
+    <div id="adbxbox" class="crumb" style="margin-top:10px"></div>
+    <div id="wimgs" class="stats"></div>
+    <button id="wstar" style="margin-top:8px;background:#eceef1;border:1px solid #cbd5e1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;font-weight:600"></button>`;
+  wire(p);
+  const star=document.getElementById('wstar');
+  const wl=watchList();star.textContent=wl[f]?'★ watching':'☆ watch gate/status';
+  star.onclick=()=>toggleWatch(f);
+  if(rg)loadPhoto(rg,'pphoto',f);
+  fetch('api/adbx?fno='+encodeURIComponent(f)+'&date='+(depRow.date||tk()),{cache:'no-store'})
+    .then(r=>r.json()).then(d=>{
+      if(!state.sel||state.sel.type!=='flight'||state.sel.id!==f)return;
+      const details=document.getElementById('adbxbox');if(details&&(d._miss||d.error))details.textContent='Additional aircraft details are unavailable for this flight.';
+      if(d.reg){REGS[f]=d.reg;loadPhoto(d.reg,'pphoto',f);}
+      const line=[];
+      if(d.model)line.push('Aircraft: <b>'+esc(d.model)+'</b>'+((d.reg||REGS[f])?' · <span class="reglink" data-reg="'+esc(d.reg||REGS[f])+'" style="cursor:pointer;color:var(--blu);text-decoration:underline">'+esc(d.reg||REGS[f])+'</span>':''));
+      if(d.delay!=null)line.push('Delay: <b>'+(d.delay>0?d.delay+' min late':d.delay<0?(-d.delay)+' min early':'on time')+'</b>');
+      if(d.depRunway)line.push('Dep runway: '+esc(d.depRunway));
+      if(line.length){const el=document.createElement('div');el.className='crumb';el.style.margin='6px 0';
+        el.innerHTML=line.join(' · ');
+        const anchor=document.getElementById('wimgs')||document.getElementById('adbxbox');
+        anchor.parentNode.insertBefore(el,anchor);}
+    }).catch(()=>{});
+  const wbox=document.getElementById('wimgs');
+  fetch('api/wimage?title='+encodeURIComponent(nameOf(i.a)),{cache:'no-store'})
+    .then(r=>r.json()).then(w2=>{
+      if(!state.sel||state.sel.type!=='flight'||state.sel.id!==f)return;
+      if(w2.thumb){const el=document.createElement('div');el.className='stat';el.style.maxWidth='150px';
+        el.innerHTML=`<img src="${esc(w2.thumb)}" style="max-width:140px;border-radius:6px"><span>${esc(nameOf(i.a))}</span>`;
+        wbox.appendChild(el);}
+    }).catch(()=>{});
+  if(ty)fetch('api/wimage?title='+encodeURIComponent(ty),{cache:'no-store'})
+    .then(r=>r.json()).then(w3=>{
+      if(!state.sel||state.sel.type!=='flight'||state.sel.id!==f)return;
+      if(w3.thumb){const el=document.createElement('div');el.className='stat';el.style.maxWidth='150px';
+        el.innerHTML=`<img src="${esc(w3.thumb)}" style="max-width:140px;border-radius:6px"><span>${esc(ty)}</span>`;
+        wbox.appendChild(el);}
+    }).catch(()=>{});
+}
+
+function airlinePanel(p,a){
+  const g=airlineGates(a),t=Object.values(g).reduce((s,v)=>s+v,0);
+  const fls=allFlights().filter(x=>x.a===a).sort((x,y)=>y.t-x.t).slice(0,10);
+  p.innerHTML=`<div class="crumb"><a onclick="select(null)">&larr; overview</a></div>
+    <h2>${nameOf(a)} <span style="color:var(--mut);font-weight:400">(${a})</span></h2>
+    <div class="stats"><div class="stat"><b>${fmt(t)}</b>gate movements</div>
+    <div class="stat"><b>${Object.keys(g).length}</b>gates used</div></div>
+    <h2>Gate distribution — click to locate</h2>${bars(g,t,'data-gate',null,14)}
+    <h2>Top flights</h2>${bars(Object.fromEntries(fls.map(x=>[x.f,x.t])),Math.max(1,fls[0]?.t||1),'data-flight',null,10)}`;
+  wire(p);
+}
+function esc(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function loadPhoto(reg,elId,f){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  if(!reg){el.innerHTML='';return;}
+  el.textContent='loading photo…';
+  fetch('api/photo?reg='+encodeURIComponent(reg),{cache:'no-store'})
+    .then(r=>r.json()).then(p2=>{
+      if(!p2.thumb){el.textContent='';return;}
+      const ok=(!f)||(state.sel&&state.sel.type==='flight'&&state.sel.id===f);
+      if(!ok)return;
+      el.innerHTML=`<img src="${esc(p2.thumb)}" alt="aircraft" style="max-width:100%;border-radius:8px;display:block">
+        <div class="crumb">&copy; ${esc(p2.photographer)||'planespotters.net'} · <a href="${esc(p2.link)}" target="_blank" style="color:var(--blu)">photo page</a></div>`;
+    }).catch(()=>{el.textContent='';});
+}
+function regPanel(p,reg){
+  p.innerHTML=`<div class="crumb"><a onclick="select(null)">&larr; overview</a></div><h2>${esc(reg)}</h2><p class="crumb">loading movements…</p>`;
+  fetch('api/reg?reg='+encodeURIComponent(reg),{cache:'no-store'}).then(r=>r.json()).then(d=>{
+    const mv=(d.moves||[]).slice().reverse();
+    p.innerHTML=`<div class="crumb"><a onclick="select(null)">&larr; overview</a></div>
+      <h2>${esc(d.reg)} <span style="color:var(--mut);font-weight:400">· registration tracker</span></h2>
+      <div class="stats"><div class="stat"><b>${mv.length}</b>archived movements</div>
+      <div class="stat"><b>${(d.flights||[]).length}</b>flights flown</div></div>
+      <div id="pphoto" style="margin:10px 0"></div>
+      <h2>Movement history</h2>
+      ${mv.slice(0,80).map(m2=>`<div class="now" data-flight="${esc(m2.f)}"><b>${m2.date.slice(5)} ${m2.time} ${esc(m2.f)}</b> → ${esc(m2.dest)}<span class="st">Gate ${m2.gate}</span></div>`).join('')||'<p class="crumb">no movements yet</p>'}`;
+    loadPhoto(reg,'pphoto');
+    wire(p);
+  }).catch(()=>{p.innerHTML='load failed';});
+}
+
+function destPanel(p,city){
+  const dep=boardToday().filter(r=>cityOf(r)===city).sort((a,b)=>a.time.localeCompare(b.time));
+  const gates={};dep.forEach(r=>{if(r.gate)gates[r.gate]=(gates[r.gate]||0)+1;});
+  const types={};dep.forEach(r=>{const t2=TYPES[r.f];if(t2)types[t2]=(types[t2]||0)+1;});
+  p.innerHTML=`<div class="crumb"><a onclick="select(null)">&larr; overview</a></div>
+    <h2>${city}</h2>
+    <div class="stats"><div class="stat"><b>${dep.length}</b>flights today</div>
+    <div class="stat"><b>${Object.keys(gates).length}</b>gates used</div>
+    <div class="stat"><b>${Object.keys(types).slice(0,1)[0]||'—'}</b>usual aircraft</div></div>
+    <button id="drawarc" style="background:#1d4ed8;color:#fff;border:0;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;font-weight:600;margin:4px 0">draw route arc on map</button>
+    <h2>Gates today</h2>${bars(gates,dep.length,'data-gate',null,8)}
+    <h2>Aircraft types</h2>${bars(types,dep.length,'data-none',null,8).replace('data-none','data-x')}
+    <h2>Flights</h2>${dep.map(r=>`<div class="now" data-flight="${r.f}"><b>${r.time} ${r.f}</b> · Gate ${r.gate||'?'}<span class="st">${r.status}</span></div>`).join('')}`;
+  wire(p);
+  document.getElementById('drawarc').onclick=()=>{
+    const code=Object.keys(AIRPORTS).find(k=>AIRPORTS[k].toUpperCase()===city.toUpperCase());
+    const o=code&&(DATA.origins||{})[code];
+    if(!o)return;
+    if(window.MAPARC)MAPARC.forEach(l2=>map.removeLayer(l2));
+    window.MAPARC=[
+      L.polyline([[o.la,o.lo],[22.3125,113.9265]],{color:'#7c3aed',weight:2,dashArray:'5 7',opacity:.8}).addTo(map).bindTooltip(city+' → VHHH'),
+      L.circleMarker([o.la,o.lo],{radius:6,color:'#7c3aed',fillColor:'#ddd6fe',fillOpacity:1}).addTo(map).bindTooltip(code)
+    ];
+    map.fitBounds(L.polyline([[o.la,o.lo],[22.3125,113.9265]]).getBounds().pad(0.3));
+  };
+}
+
+const ac=document.getElementById('ac');
+{const fl=allFlights().sort((a,b)=>b.t-a.t);
+ const opts=[...Object.entries(AIR).map(([c,n])=>`<option value="A:${c}">${c} · ${n}</option>`),
+             ...fl.slice(0,2500).map(x=>`<option value="F:${x.f}">${x.f} · ${nameOf(x.a)}</option>`)];
+ ac.innerHTML=opts.join('');}
+function submitSearch(e){
+  const v=e.target.value.trim();if(!v)return;
+  if(v.startsWith('A:')){select({type:'airline',id:v.slice(2)});}
+  else if(v.startsWith('F:')){select({type:'flight',id:v.slice(2)});}
+  else{const up=v.replace(/\s+/g,'').toUpperCase();
+    if(AIR[up])select({type:'airline',id:up});
+    else if(flightInfo(up))select({type:'flight',id:up});
+    else{const hit=Object.entries(AIR).find(([c,n])=>n.toLowerCase().includes(v.toLowerCase()));if(hit)select({type:'airline',id:hit[0]});}}
+  if(state.sel)showView('map');
+  e.target.value='';
+}
+document.getElementById('search').addEventListener('change',submitSearch);
+document.getElementById('search').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();submitSearch(e);}});
+document.getElementById('legend').innerHTML=`offline schematic · geometry &copy; OpenStreetMap<span class="sw" style="background:#1d4ed8"></span>busy gates<span class="sw" style="background:#f59e0b;border:1px dashed #b45309"></span>occupied now`;
+let VIEW='board',boardDirty=false;
+function showView(v){
+  VIEW=v;
+  document.querySelectorAll('#viewseg button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  document.getElementById('boardview').style.display=v==='board'?'flex':'none';
+  document.getElementById('mapview').style.display=v==='map'?'flex':'none';
+  document.getElementById('taxiview').style.display=v==='taxi'?'flex':'none';
+  document.getElementById('flowview').style.display=v==='flow'?'flex':'none';
+  document.getElementById('threeview').style.display=v==='3d'?'flex':'none';
+  const elId={board:'boardview',map:'mapview',taxi:'taxiview','3d':'threeview',flow:'flowview'}[v];
+  const node=document.getElementById(elId);
+  if(node){node.classList.remove('viewfade');void node.offsetWidth;node.classList.add('viewfade');}
+  if(v==='map')setTimeout(()=>map.invalidateSize(),60);
+  if(v==='taxi')setTimeout(()=>{if(!TAXIMAP)initTaxi();else TAXIMAP.invalidateSize();},60);
+  if(v==='flow')setTimeout(()=>{if(!FLOWMAP)initFlow();else FLOWMAP.invalidateSize();drawTrails(LIVE.trails,FLOWMAP,FLOWLINES.flow);drawArcs();},60);
+  if(v==='3d')setTimeout(()=>{if(!THREEREADY)initThree();else THREEVIEW.resize();},60);
+  if(v==='board'&&boardDirty){boardDirty=false;boardRender();}
+}
+document.getElementById('viewseg').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(b)showView(b.dataset.v);
+});
+const COLS=[['TIME',5],['FLIGHT',7],['DESTINATION',13],['TYPE',5],['GATE',4],['STATUS',11]];
+const MAXROWS=20,AMBER=['BOARDING','FINAL CALL','GATE CLOSED','GATE CHGD','DELAYED','CANCELLED'];
+const TYPES=DATA.types||{},REGS=DATA.regs||{};
+function delayRisk(r){
+  let base=predDelay(r);if(base==null)base=12;
+  let score=base;
+  const w=LIVE.wx||{};
+  if(w.lightning)score+=35;
+  if((w.wind||{}).vis_m!=null&&w.wind.vis_m<5000)score+=15;
+  const lvl=score>=30?'HIGH':score>=15?'MEDIUM':'LOW';
+  const col=score>=30?'#b91c1c':score>=15?'#b45309':'#15803d';
+  return{lvl,col,est:Math.round(score)};
+}
+function predDelay(r){
+  const a=DATA.delayByAir?.[r.airline];
+  if(a&&a[1]>=8)return a[0];
+  const h=+(r.time||'00').slice(0,2);
+  const bh=(DATA.delayByHour||[]).find(x=>x[0]===h);
+  return bh?bh[1]:null;
+}
+const TILES=[];let CURROWS=[];
+function mkTile(){
+  const t=document.createElement('div');t.className='tile';t.dataset.ch=' ';t._disp=' ';t.setAttribute('aria-hidden','true');
+  const mkh=cls=>{const h=document.createElement('div');h.className=cls;h.appendChild(document.createElement('span'));t.appendChild(h);return h;};
+  t._ht=mkh('h t');t._hb=mkh('h b');t._ft=mkh('ft');t._fb=mkh('fb');
+  t._ft.style.display='none';t._fb.style.display='none';
+  t._ts=t._ht.firstChild;t._bs=t._hb.firstChild;t._fts=t._ft.firstChild;t._fbs=t._fb.firstChild;
+  const s=document.createElement('div');s.className='seam';t.appendChild(s);
+  return t;
+}
+(function buildBoard(){
+  const b=document.getElementById('board');
+  const hd=document.createElement('div');hd.className='chead';
+  COLS.forEach(([n,w],ci)=>{const s=document.createElement('span');s.textContent=n;s.style.width=`calc(${w} * (var(--tw) + 3px) - 3px)`;hd.appendChild(s);
+    if(ci<COLS.length-1){const g=document.createElement('div');g.style.width='14px';hd.appendChild(g);}});
+  b.appendChild(hd);
+})();
+function ensureRows(n){
+  const b=document.getElementById('board');
+  for(let i=TILES.length;i<n;i++){
+    const row=document.createElement('div');row.className='brow';const tr=[];
+    COLS.forEach(([n2,w],ci)=>{
+      const cw=[];
+      for(let j=0;j<w;j++){const t=mkTile();row.appendChild(t);cw.push(t);}
+      tr.push(cw);
+      if(ci<COLS.length-1){const g=document.createElement('div');g.style.width='14px';row.appendChild(g);}
+    });
+    row.tabIndex=0;row.setAttribute('role','button');row.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();row.click();}});
+    row.addEventListener('click',()=>{const r=CURROWS[i];if(r&&r.f){showView('map');select({type:'flight',id:r.f});}});
+    b.appendChild(row);TILES.push(tr);
+  }
+}
+function setTile(t,ch){
+  t.dataset.ch=ch;
+  const disp=t._disp||' ';
+  if(disp===ch)return;
+  if(t._p)t._p();
+  const old=disp;
+  t._disp=ch;
+  t._ts.textContent=ch;
+  if(!t._ft.animate||matchMedia('(prefers-reduced-motion: reduce)').matches){t._bs.textContent=ch;return;}
+  t._fts.textContent=old;t._fbs.textContent=ch;t._bs.textContent=old;
+  t._ft.style.display='block';t._fb.style.display='block';
+  let done=false;
+  const fin=()=>{if(done)return;done=true;t._bs.textContent=ch;t._ft.style.display='none';t._fb.style.display='none';t._p=null;a1.cancel();a2.cancel();};
+  const a1=t._ft.animate([{transform:'rotateX(0deg)'},{transform:'rotateX(-90deg)'}],{duration:140,easing:'ease-in',fill:'forwards'});
+  const a2=t._fb.animate([{transform:'rotateX(-90deg)'},{transform:'rotateX(0deg)'}],{duration:140,delay:140,easing:'ease-out',fill:'both'});
+  const mid=setTimeout(()=>{t._bs.textContent=ch;},150);
+  t._p=()=>{if(done)return;done=true;clearTimeout(mid);try{a1.cancel();a2.cancel();}catch(e){}
+    t._bs.textContent=ch;t._ft.style.display='none';t._fb.style.display='none';t._p=null;};
+  Promise.all([a1.finished.catch(()=>{}),a2.finished.catch(()=>{})]).then(fin);
+}
+let Q=[];const QI=new Map();let pumping=false,doneCount=0;
+function qFlip(t,ch,delay=0){
+  const queued=QI.get(t);if(queued){queued.done=true;QI.delete(t);}
+  if(t.dataset.ch===ch&&t._disp===ch)return;
+  if((delay|0)<=0){setTile(t,ch);return;}
+  const at=performance.now()+delay;
+  const ex=QI.get(t);
+  if(ex&&!ex.done){ex.ch=ch;ex.at=Math.min(ex.at,at);t.dataset.ch=ch;return;}
+  const e={at,t,ch,done:false};Q.push(e);QI.set(t,e);
+  t.dataset.ch=ch;
+  if(!pumping){pumping=true;requestAnimationFrame(qstep);}
+}
+function qstep(now){
+  let budget=70,pending=0;
+  for(const e of Q){
+    if(e.done)continue;
+    if(e.at<=now){if(budget>0){e.done=true;doneCount++;QI.delete(e.t);setTile(e.t,e.ch);budget--;}else pending++;}
+    else pending++;
+  }
+  if(doneCount>1200){Q=Q.filter(e=>!e.done);doneCount=0;}
+  if(pending)requestAnimationFrame(qstep);else{pumping=false;Q=[];QI.clear();doneCount=0;}
+}
+let AC=null,sndOn=false;
+function startReplay(){
+  const d=document.getElementById('repdate').value;
+  if(!d)return;
+  fetch('api/day?date='+d,{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Archive unavailable');return r.json();}).then(j=>{
+    if(j.error||!Array.isArray(j.rows))throw Error('Archive unavailable');boardPage=0;
+    REPLAY=true;LIVE.rows=j.rows||[];LIVE.mode='replay';BOARDDIR='D';
+    document.querySelectorAll('#bdirseg button').forEach(x=>x.classList.toggle('on',x.dataset.bd==='D'));
+    document.getElementById('repexit').style.display='inline-block';
+    document.getElementById('win').textContent='REPLAY '+d+' — archive board';
+    badge();render();boardRender();select(null);
+  }).catch(()=>{document.getElementById('boardcount').textContent='Could not load this archive. Please try another date.';});
+}
+function exitReplay(){
+  REPLAY=false;document.getElementById('repexit').style.display='none';document.getElementById('win').textContent='';
+  poll();select(null);
+}
+document.getElementById('repgob').addEventListener('click',startReplay);
+document.getElementById('repexit').addEventListener('click',exitReplay);
+document.getElementById('bdirseg').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#bdirseg button').forEach(x=>x.classList.toggle('on',x===b));
+  BOARDDIR=b.dataset.bd;boardPage=0;boardRender();
+});
+document.getElementById('bsnd').addEventListener('click',e=>{sndOn=!sndOn;e.currentTarget.textContent=sndOn?'SOUND ON':'SOUND OFF';e.currentTarget.classList.toggle('on',sndOn);});
+function click(){
+  if(!sndOn)return;
+  try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();
+    const o=AC.createOscillator(),g=AC.createGain();o.type='square';o.frequency.value=1900;
+    g.gain.setValueAtTime(.025,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+.03);
+    o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+.04);}catch(e){}
+}
+function statusOf(r){const s=(r.status||'').toLowerCase();
+  if(s.startsWith('dep'))return'DEPARTED';
+  if(s.includes('cancel'))return'CANCELLED';
+  if(s.startsWith('delay'))return'DELAYED';
+  if(s.includes('final'))return'FINAL CALL';
+  if(s.includes('gate closed'))return'GATE CLOSED';
+  if(s.includes('gate change'))return'GATE CHGD';
+  if(s.includes('boarding'))return'BOARDING';
+  if(s.includes('check'))return'CHECK-IN';
+  return'SCHEDULED';}
+function cityOf(r){const c=(r.dest||'').split('|')[0];return(AIRPORTS[c]||c||'—');}
+let BOARDDIR='D';
+function statusOfA(r){const s=(r.status||'').toLowerCase();
+  const am=/Arr (\d{2}:\d{2})/.exec(r.status||'');
+  if(am)return'ARR '+am[1];
+  if(s.startsWith('arr')||s.includes('landed'))return'ARRIVED';
+  if(s.startsWith('delay'))return'DELAYED';
+  if(s.includes('cancel'))return'CANCELLED';
+  if(s.includes('expect'))return'EXPECTED';
+  return'SCHEDULED';}
+function boardRows(dir){
+  const g={};
+  const tmr=hkDate(new Date(Date.now()+86400000));
+  LIVE.rows.forEach(r=>{
+    if(r.dir!==dir)return;
+    if(!REPLAY&&r.date!==tk()&&r.date!==tmr)return;
+    const k=r.date+'|'+r.time+'|'+(r.gate||'')+'|'+(r.dest||'');
+    if(!g[k]){r.st=dir==='A'?statusOfA(r):statusOf(r);g[k]={...r,nums:[r.f]};}
+    else if(!g[k].nums.includes(r.f))g[k].nums.push(r.f);
+  });
+  return Object.values(g)
+    .filter(r=>REPLAY||dir==='A'?true:(fresh(r)||r.st==='DELAYED'||r.st==='CANCELLED'))
+    .sort((a,b)=>((a.date===tk()?0:1)*100+ +a.time.slice(0,2))*60+ +a.time.slice(3)-((b.date===tk()?0:1)*100+ +b.time.slice(0,2))*60- +b.time.slice(3))
+    ;
+}
+function rowGate(r){const est=!(LIVE.pairs[r.f]||(LIVE.extArr||{})[r.f]);const g=r.gate||arrGate(r);return g?((est&&r.dir==='A')?'~'+g:String(g)):'';}
+const altIdx={};
+const numsOf=r=>r.nums&&r.nums.length>1?r.nums:null;
+const curNum=r=>{const ns=numsOf(r);return ns?ns[(altIdx[r.date+'|'+r.time+'|'+r.gate]||0)%ns.length]:r.f;};
+let booted=false,boardPage=0;
+function statusClass(s){return'st-'+String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+function setTileSilent(t,ch){
+  const queued=QI.get(t);if(queued){queued.done=true;QI.delete(t);}
+  t.dataset.ch=ch;
+  if(t._disp===ch)return;
+  if(t._p)t._p();
+  t._disp=ch;t.dataset.ch=ch;
+  t._ts.textContent=ch;t._bs.textContent=ch;
+}
+function boardRender(){
+  const query=document.getElementById('boardfilter').value.trim().toUpperCase();
+  const status=document.getElementById('statusfilter').value;
+  const all=boardRows(BOARDDIR).filter(r=>(!query||[...r.nums,nameOf(r.airline),cityOf(r),r.dest,rowGate(r)].join(' ').toUpperCase().includes(query))&&(!status||r.st===status||(status==='ARRIVED'&&r.st.startsWith('ARR '))));
+  boardPage=Math.min(boardPage,Math.max(0,Math.ceil(all.length/MAXROWS)-1));
+  const rows=all.slice(boardPage*MAXROWS,(boardPage+1)*MAXROWS);CURROWS=rows;
+  document.getElementById('boardcount').textContent=all.length?`${boardPage*MAXROWS+1}–${boardPage*MAXROWS+rows.length} of ${all.length} flights · HKT`:'0 flights';
+  document.getElementById('boardempty').hidden=!!rows.length;
+  document.getElementById('prevpage').disabled=boardPage===0;
+  document.getElementById('nextpage').disabled=(boardPage+1)*MAXROWS>=all.length;
+  document.getElementById('btitle').textContent='HONG KONG INTERNATIONAL AIRPORT · '+(BOARDDIR==='D'?'DEPARTURES':'ARRIVALS');
+  document.querySelector('.chead span:nth-child(5)').textContent=BOARDDIR==='D'?'DESTINATION':'ORIGIN';
+  const n=Math.min(rows.length,MAXROWS);ensureRows(n);
+  TILES.forEach((tr,i)=>{tr[0][0].parentElement.hidden=i>=n;tr[0][0].parentElement.style.display=i>=n?'none':'flex';});
+  const bv=document.getElementById('boardview');
+  const boxTop=bv.scrollTop,boxBot=bv.scrollTop+(bv.clientHeight||700);
+  const visA=Math.max(0,Math.floor(boxTop/46)-3),visB=Math.min(n,Math.ceil(boxBot/46)+3);
+  let changes=0;const plan=[];
+  for(let i=0;i<n;i++){
+    const r=rows[i];
+    TILES[i][0][0].parentElement.setAttribute('aria-label',`${r.time} ${r.f}, ${cityOf(r)}, ${r.st}`);
+    const num=r?curNum(r):'';
+    const vals=r?[r.time,num,cityOf(r),TYPES[num]||TYPES[r.f]||'',rowGate(r),r.st]:['','','','','',''];
+    const vis=i>=visA&&i<=visB;
+    COLS.forEach(([n2,w],ci)=>{
+      const str=(vals[ci]||'').toUpperCase().padEnd(w).slice(0,w);
+      TILES[i][ci].forEach((t,j)=>{
+        const ch=str[j];
+        const cls='tile'+(ci===5&&r?' '+statusClass(r.st):'');
+        if(t.className!==cls)t.className=cls;
+        if(t._disp!==ch||t.dataset.ch!==ch){changes++;plan.push([t,ch,vis,i]);}
+      });
+    });
+  }
+  const inview=plan.filter(p2=>p2[3]>=visA&&p2[3]<=visB);
+  const outview=plan.filter(p2=>p2[3]<visA||p2[3]>visB);
+  inview.forEach(([t,ch,vis,i],k)=>{
+    qFlip(t,ch,k*0.4);
+  });
+  outview.forEach(([t,ch])=>setTileSilent(t,ch));
+  if(inview.length&&sndOn)setTimeout(click,0);
+  booted=true;
+}function flipFlightCell(i,num,delay=0){
+  const str=(num||'').toUpperCase().padEnd(COLS[1][1]).slice(0,COLS[1][1]);
+  click();
+  TILES[i][1].forEach((t,j)=>qFlip(t,str[j],delay+j*14));
+}
+setInterval(()=>{
+  if(VIEW!=='board'||document.hidden||!document.getElementById('intro').classList.contains('gone'))return;
+  CURROWS.forEach((r,i)=>{
+    const ns=numsOf(r);if(!ns)return;
+    const k=r.date+'|'+r.time+'|'+r.gate;
+    altIdx[k]=((altIdx[k]||0)+1)%ns.length;
+    flipFlightCell(i,ns[altIdx[k]],(i*260)%5200);
+  });
+},7000);
+const CLOCKTILES=[];
+(function(){const c=document.getElementById('bclock');for(let i=0;i<8;i++){const t=mkTile();c.appendChild(t);CLOCKTILES.push(t);}})();
+function clockRender(){
+  const d=new Date();
+  const s=hkClock();
+  document.getElementById('bclock').setAttribute('aria-label',s+' Hong Kong time');
+  CLOCKTILES.forEach((t,j)=>qFlip(t,s[j],0));
+}
+setInterval(clockRender,1000);
+
+let TAXIMAP=null,TAXROUTE=null;
+const TRAILLINES={taxi:[],flow:[]};
+function smoothPts(pts){
+  if(pts.length<5)return pts.map(p=>[p[0],p[1]]);
+  let cur=pts.map(p=>[p[0],p[1]]);
+  for(let pass=0;pass<2;pass++){
+    const out=[cur[0]];
+    for(let i=1;i<cur.length-1;i++){
+      out.push([(cur[i-1][0]+2*cur[i][0]+cur[i+1][0])/4,
+                (cur[i-1][1]+2*cur[i][1]+cur[i+1][1])/4]);
+    }
+    out.push(cur[cur.length-1]);cur=out;
+  }
+  return cur;
+}
+function landedOf(r){
+  const m=/Arr (\d{2}:\d{2})/.exec(r.status||'');
+  if(m)return m[1];
+  const ea=(LIVE.extArr||{})[r.f];
+  return (ea&&ea.actual)||null;
+}
+function drawTrails(trails,map,store){
+  store.forEach(l=>map.removeLayer(l));store.length=0;
+  if(store===FLOWLINES.flow&&!document.getElementById("tgltrails").checked)return;
+  for(const t of trails||[]){
+    if(!t.pts||t.pts.length<2)continue;
+    const col=t.dir==='dep'?'#f59e0b':(t.dir==='arr'?'#1d4ed8':'#7d8ca3');
+    const route=(DATA.csRoutes||{})[t.cs]||'';
+    if(t.pts.length<3&&store===FLOWLINES.flow)continue;
+    const pl=L.polyline(smoothPts(t.pts),{color:col,weight:2.5,opacity:.75}).addTo(map);
+    const sm=smoothPts(t.pts);
+    pl.bindTooltip(`${t.cs} ${t.t?'· '+t.t:''} ${route?'→ '+route:''} [${t.dir}]`);
+    store.push(pl);
+  }
+}
+
+const TG=DATA.taxigraph,TX=DATA.taxi||{byGate:{},byHour:[]};
+function dijkstra(src,dst){
+  const N=TG.adj.length,dist=new Float64Array(N).fill(Infinity),prev=new Int32Array(N).fill(-1);
+  const h=[];const push=(d,i)=>{h.push([d,i]);let c=h.length-1;while(c>0){const p=(c-1)>>1;if(h[p][0]<=h[c][0])break;const t=h[p];h[p]=h[c];h[c]=t;c=p;}};
+  const pop=()=>{const top=h[0],last=h.pop();if(h.length){h[0]=last;let i=0;for(;;){let a=2*i+1,b=a+1,s=i;if(a<h.length&&h[a][0]<h[s][0])s=a;if(b<h.length&&h[b][0]<h[s][0])s=b;if(s===i)break;const t=h[s];h[s]=h[i];h[i]=t;i=s;}}return top;};
+  dist[src]=0;push(0,src);
+  while(h.length){const[d,i]=pop();if(d>dist[i])continue;if(i===dst)break;
+    for(const[j,w]of TG.adj[i]){const nd=d+w;if(nd<dist[j]){dist[j]=nd;prev[j]=i;push(nd,j);}}}
+  const path=[];let c=dst;while(c!==-1){path.push(c);c=prev[c];}
+  path.reverse();
+  return{dist:dist[dst],path:path.map(i2=>TG.nodes[i2])};
+}
+function initTaxi(){
+  TAXIMAP=L.map('taximap');TAXIMAP.setView([22.3125,113.9265],13);
+  L.geoJSON(DATA.geo,{style:f=>STYLE[f.properties.k]||{}}).addTo(TAXIMAP);
+  TG.thrs.forEach(th=>{const m=L.circleMarker([th.lat,th.lon],{radius:7,color:'#b45309',fillColor:'#f59e0b',fillOpacity:1,weight:2}).addTo(TAXIMAP);m.bindTooltip('RWY '+th.id);m.on('click',()=>{const tr=document.getElementById('tr');tr.value=th.id;computeTaxi();});});
+  for(const[g,info]of Object.entries(GATES)){
+    if(TG.gateNode[g]==null)continue;
+    const m=L.circleMarker([info.lat,info.lon],{radius:5,color:'#1d4ed8',fillColor:'#93c5fd',fillOpacity:.9,weight:1}).addTo(TAXIMAP);
+    m.bindTooltip('Gate '+g);
+    m.on('click',()=>{document.getElementById('tg').value=g;computeTaxi();});
+  }
+  const tg=document.getElementById('tg');
+  tg.innerHTML=Object.keys(GATES).filter(gg=>TG.gateNode[gg]!=null).sort((a,b)=>(+a||999)-(+b||999)).map(gg=>`<option value="${gg}">Gate ${gg}</option>`).join('');
+  tg.value='212';
+  const tr=document.getElementById('tr');
+  tr.innerHTML='<option value="">auto — predicted in use</option>'+TG.thrs.map(th=>`<option value="${th.id}">${th.id}</option>`).join('');
+  tg.onchange=computeTaxi;tr.onchange=()=>{TRTOUCHED=true;computeTaxi();};
+  const seen=new Set();
+  (DATA.geo3d?.twy||[]).forEach(t2=>{
+    const rf=(t2.ref||'').trim();
+    if(!rf||seen.has(rf))return;seen.add(rf);
+    const mid=t2.pts[Math.floor(t2.pts.length/2)];
+    L.marker([mid[1],mid[0]],{icon:L.divIcon({className:'',html:`<div class="mlabel" style="background:#7c3aedcc">TWY ${rf}</div>`,iconSize:null}),interactive:false}).addTo(TAXIMAP);
+  });
+  const bh=TX.byHour||[];
+  document.getElementById('thours').innerHTML=bh.map(([h,m,n])=>`<div class="hbar"><b>${String(h).padStart(2,'0')}:00</b><i style="width:${Math.round(m*6)}px"></i>${m} min <span style="color:#94a3b8">(n=${fmt(n)})</span></div>`).join('');
+  updateRwyInfo();
+  computeTaxi();
+}
+
+function renderWx(){
+  const w=LIVE.wx;if(!w)return;
+  const wind=w.wind||{};
+  let agree='';
+  if(w.rec&&LIVE.runway&&LIVE.runway.dep){
+    const adDir=LIVE.runway.dep.startsWith(w.rec);
+    agree=`<div class="stat"><b style="color:${adDir?'#15803d':'#b45309'}">${adDir?'✓ matches':'✗ differs'}</b>ADS-B dep ${LIVE.runway.dep}</div>`;
+  }
+  const vis=wind.vis_m!=null?(wind.vis_m>=10000?'>10 km':(wind.vis_m/1000).toFixed(1)+' km'):'—';
+  const strip=`<div class="stat"><b>${wind.dir!=null?wind.dir+'°':''} / ${wind.speed_kt!=null?wind.speed_kt+'kt':''}</b>wind</div>
+    <div class="stat"><b>${w.rec?w.rec+'L/R':'—'}</b>wind favours (head ${w.head!=null?w.head+'kt':''})</div>
+    <div class="stat"><b>${w.cross!=null?w.cross+'kt':''}</b>crosswind</div>
+    <div class="stat"><b>${vis}</b>visibility</div>
+    ${w.lightning?'<div class="stat"><b style="color:#b45309">⚡</b>lightning nearby — delays likely</div>':''}
+    ${(w.warnings||[]).map(x=>`<div class="stat"><b style="color:#b45309">${esc(x)}</b>HKO warning</div>`).join('')}
+    ${agree}`;
+  const s1=document.getElementById('wxstrip');if(s1)s1.innerHTML=strip;
+  const s2=document.getElementById('flowwx');if(s2)s2.innerHTML=strip;
+}
+function watchList(){try{return JSON.parse(localStorage.getItem('watchlist')||'{}')}catch(e){return {}}}
+function watchState(){try{return JSON.parse(localStorage.getItem('watchstate')||'{}')}catch(e){return {}}}
+function checkWatch(){
+  const wl=watchList(),st=watchState();let changed=false;
+  for(const f in wl){
+    const r=LIVE.rows.find(x=>x.f===f&&x.date===tk());if(!r)continue;
+    const cur={gate:r.gate||arrGate(r)||'',status:r.status||''};
+    const prev=st[f];
+    if(prev&&(prev.gate!==cur.gate||prev.status!==cur.status)){
+      changed=true;
+      try{if(Notification.permission==='granted')new Notification(`${f}: gate ${cur.gate||'?'} · ${cur.status}`,{body:'VHHH Gate Map'});}catch(e){}
+    }
+    st[f]=cur;
+  }
+  try{localStorage.setItem('watchstate',JSON.stringify(st))}catch(e){}
+  if(changed)renderWx();
+}
+function toggleWatch(f){
+  const wl=watchList();
+  if(wl[f]){delete wl[f];}
+  else{wl[f]=1;
+    try{Notification.requestPermission().then(p=>{if(p==='granted')new Notification(`watching ${f}`, {body:'you will be notified on gate/status changes'})});}catch(e){}
+    const st=watchState(),r=LIVE.rows.find(x=>x.f===f&&x.date===tk());st[f]=r?{gate:r.gate||arrGate(r)||'',status:r.status||''}:{gate:'',status:''};
+    try{localStorage.setItem('watchstate',JSON.stringify(st))}catch(e){}
+  }
+  try{localStorage.setItem('watchlist',JSON.stringify(wl))}catch(e){}
+  if(state.sel&&state.sel.type==='flight')select({type:'flight',id:f});
+}
+function updateRwyInfo(){
+  const el=document.getElementById('rwyinfo');
+  const r=LIVE.runway;
+  if(!r){el.textContent='runway prediction: gathering ADS-B…';return;}
+  el.innerHTML=`Predicted in use — <b>ARR ${r.arr||'?'}</b>${r.arrPct?' ('+r.arrPct+'%)':''} · <b>DEP ${r.dep||'?'}</b>${r.depPct?' ('+r.depPct+'%)':''} <span style="color:#94a3b8">from ${r.n} samples</span>`;
+  const tr=document.getElementById('tr');
+  if(r.dep&&!tr.querySelector(`option[value="${r.dep}"]`)){
+    tr.insertAdjacentHTML('beforeend',`<option value="${r.dep}">${r.dep} (predicted)</option>`);
+  }
+  if(!TRTOUCHED&&r.dep)tr.value=r.dep;
+}
+let TRTOUCHED=false;
+function computeTaxi(){
+  const g=document.getElementById('tg').value;
+  let rid=document.getElementById('tr').value;
+  if(rid===''){const p=LIVE.runway&&LIVE.runway.dep;if(p)rid=p;}
+  const src=TG.gateNode[g];if(src==null)return;
+  const targets=rid?TG.thrs.filter(t=>t.id===rid):TG.thrs;
+  let best=null;
+  for(const th of targets){const r=dijkstra(src,th.node);if(!best||r.dist<best.r.dist)best={th,r};}
+  if(TAXROUTE){TAXROUTE.remove();TAXROUTE=null;}
+  if(!best||!isFinite(best.r.dist)){document.getElementById('tinfo').innerHTML='<p class="crumb">No route found.</p>';return;}
+  TAXROUTE=L.polyline(best.r.path,{color:'#b45309',weight:4,dashArray:'6 6',opacity:.9}).addTo(TAXIMAP);
+  TAXIMAP.fitBounds(TAXROUTE.getBounds().pad(0.15));
+  const km=best.r.dist/1000,est=km/28*60;
+  const ob=TX.byGate[g];
+  document.getElementById('tinfo').innerHTML=`
+    <div class="stats"><div class="stat"><b>${km.toFixed(2)} km</b>est. taxi path</div>
+    <div class="stat"><b>~${Math.round(est)} min</b>at 28 km/h</div>
+    ${ob?`<div class="stat"><b>${ob[0]} min</b>observed median<br><span style="font-size:10px">n=${fmt(ob[1])} flights</span></div>`:''}</div>
+    <p class="crumb">Gate ${g} &rarr; RWY ${best.th.id}</p>`;
+}
+
+
+let FLOWMAP=null;const FLOWLINES={flow:[]};const FLOWARROWS=[];
+function initFlow(){
+  FLOWMAP=L.map('flowmap').setView([22.45,113.75],8);
+  L.tileLayer('tiles/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap · CARTO'}).addTo(FLOWMAP);
+  L.geoJSON(DATA.geo,{style:f=>STYLE[f.properties.k]||{}}).addTo(FLOWMAP);
+  const C=[22.3125,113.9265],mx=111320*Math.cos(C[0]*Math.PI/180),mz=110540;
+  const P=(lat,lon)=>[(lon-C[1])*mx,-(lat-C[0])*mz];
+  const RWYCOL='rgba(180,40,30,0.95)';
+  (DATA.geo3d?.rwy||[]).forEach(pts=>{
+    const ll=pts.map(([lon,lat])=>[lat,lon]);
+    L.polyline(ll,{color:RWYCOL,weight:7,opacity:.95}).addTo(FLOWMAP);
+    L.circleMarker(ll[0],{radius:9,color:'#7f1d1d',fillColor:'#ef4444',fillOpacity:1,weight:2}).addTo(FLOWMAP);
+    L.circleMarker(ll[ll.length-1],{radius:9,color:'#7f1d1d',fillColor:'#ef4444',fillOpacity:1,weight:2}).addTo(FLOWMAP);
+  });
+  (DATA.nav||[]).forEach(n=>{
+    L.circleMarker([n.la,n.lo],{radius:3.5,color:'#7c3aed',fillColor:'#ddd6fe',fillOpacity:.9,weight:1.5})
+      .addTo(FLOWMAP)
+      .bindTooltip(`${n.id} · ${n.name} (${n.type})`,{permanent:['CH','HKG','TBL','SMT','LKC'].includes(n.id),direction:'right'});
+  });
+  const EXT=0.16;
+  (DATA.geo3d?.rwy||[]).forEach(pts=>{
+    if(pts.length<2)return;
+    const[lo1,la1]=pts[0],[lo2,la2]=pts[pts.length-1];
+    const dla=la2-la1,dlo=lo2-lo1,length=Math.hypot(dla,dlo)||1;
+    const ux=dla/length,uy=dlo/length;
+    const e1=[la1-ux*EXT,lo1-uy*EXT],e2=[la2+ux*EXT,lo2+uy*EXT];
+    L.polyline([e1,[la1,lo1]],{color:'rgba(180,40,30,.55)',weight:2,dashArray:'3 7'}).addTo(FLOWMAP);
+    L.polyline([[la2,lo2],e2],{color:'rgba(180,40,30,.55)',weight:2,dashArray:'3 7'}).addTo(FLOWMAP);
+    L.circleMarker(e1,{radius:3,color:'#b91c1c',fillColor:'#fca5a5',fillOpacity:1}).addTo(FLOWMAP).bindTooltip('extended final / departure track');
+    L.circleMarker(e2,{radius:3,color:'#b91c1c',fillColor:'#fca5a5',fillOpacity:1}).addTo(FLOWMAP).bindTooltip('extended final / departure track');
+  });
+  drawTrails(LIVE.trails,FLOWMAP,FLOWLINES.flow);
+  drawArcs();
+  const st=document.getElementById('flowstats');
+  const t=LIVE.trails||[];
+  st.innerHTML=`<div class="stat"><b>${t.length}</b>tracked aircraft</div>
+    <div class="stat"><b>${(DATA.nav||[]).length}</b>waypoints</div>
+    <div class="stat"><b>${Math.floor((DATA.taxigraph?.thrs||[]).length/2)}</b>runways</div>`;
+  document.getElementById('navlist').innerHTML=(DATA.nav||[]).slice(0,60).map(n=>`<span style="display:inline-block;margin:2px 4px"><b style="color:#7c3aed">${n.id}</b> ${n.name}</span>`).join('');
+  ARCS=true;
+  document.getElementById('tgltrails').checked=true;
+  document.getElementById('tglarcs').checked=true;
+  document.getElementById('tgltrails').onchange=e=>{
+    FLOWLINES.flow.forEach(l=>FLOWMAP.removeLayer(l));FLOWLINES.flow.length=0;
+    if(e.target.checked)drawTrails(LIVE.trails,FLOWMAP,FLOWLINES.flow);
+  };
+  document.getElementById('tglarcs').onchange=e=>{ARCS=e.target.checked;drawArcs();};
+  const fixes=DATA.charts?.fixes||[];
+  const navIds=new Set((DATA.nav||[]).map(n=>n.id));
+  document.getElementById('fixchips').innerHTML='2009 chart fixes on our map: '+fixes.map(f2=>
+    `<span style="display:inline-block;margin:2px 3px;color:${navIds.has(f2)?'#7c3aed':'#94a3b8'}">${f2}${navIds.has(f2)?' ✓':''}</span>`).join('');
+  let tot=0,near=0;const ch=(DATA.nav||[]).find(n2=>n2.id==='CH');
+  if(ch){for(const t of (LIVE.trails||[])){
+    if(t.dir!=='arr')continue;
+    for(const[la,lo]of t.pts){tot++;
+      if(Math.abs(la-ch.la)*111+Math.abs(lo-ch.lo)*100<5){near++;break;}}}
+    document.getElementById('choverlap').innerHTML=tot?`Arrival trails passing within 5km of CH VOR: <b>${near}</b> of ${t.filter(x=>x.dir==='arr').length} tracks.`:'No arrival trails yet (builds each poll).';
+  }
+}
+let ARCS=false;
+function drawArcs(){
+  ARCLINES.forEach(l=>FLOWMAP.removeLayer(l));ARCLINES.length=0;
+  document.getElementById('arclist').textContent='';
+  const list=document.getElementById('arclist');
+  if(!ARCS){ARCLINES.forEach(l=>FLOWMAP.removeLayer(l));ARCLINES.length=0;if(list)list.innerHTML='';return;}
+  const O=DATA.origins||{};
+  const deps={};
+  (LIVE.trails||[]).forEach(t=>{const r=(DATA.csRoutes||{})[t.cs];if(r&&O[r.split('/')[0].trim()]){}});
+  const used=new Set();
+  (LIVE.rows||[]).filter(r=>r.dir==='D'&&r.date===tk()).forEach(r=>{
+    const c=(r.dest||'').split('|')[0];
+    if(O[c])used.add(c);
+  });
+  (LIVE.rows||[]).filter(r=>r.dir==='A'&&r.date===tk()).forEach(r=>{
+    const c=(r.dest||'').split('|')[0];
+    if(O[c])used.add(c);
+  });
+  used.forEach(c=>{
+    const o=O[c];if(!o)return;
+    const pl=L.polyline([[o.la,o.lo],[22.3125,113.9265]],{color:'#7c3aed',weight:1,opacity:.4,dashArray:'4 6'}).addTo(FLOWMAP);
+    pl.bindTooltip(`route via ${c}`);ARCLINES.push(pl);
+    if(list&&ARCLINES.length<=40)list.innerHTML+=`<span style="display:inline-block;margin:2px 4px"><b>${c}</b></span>`;
+  });
+}
+const ARCLINES=[];
+
+let THREEREADY=false,MODE3D='three';
+const THREEVIEW={scene:null,cam:null,ren:null,ctl:null,pillars:{},cesium:null,
+  resize(){if(MODE3D==='cesium')return;
+    if(!this.ren)return;const W=document.getElementById('threewrap');
+    const r=W.getBoundingClientRect();if(r.width<10||r.height<10)return;
+    this.cam.aspect=r.width/r.height;this.cam.updateProjectionMatrix();
+    this.ren.setSize(Math.round(r.width),Math.round(r.height));},
+  refresh(){const occ=new Set(boardToday().map(r=>r.gate));
+    if(MODE3D==='three'&&this.ren){
+      for(const g in this.pillars)this.pillars[g].material.color.set(occ.has(g)?0xf59e0b:0x64748b);}
+    else if(MODE3D==='cesium'&&this.cesium&&this.cesiumGates){
+      for(const g in this.cesiumGates){
+        const c=occ.has(g)?Cesium.Color.fromCssColorString('#f59e0b'):Cesium.Color.fromCssColorString('#5b6675');
+        this.cesiumGates[g].cylinder.material=c;}}}};
+async function getGeoKey(){
+  try{const k=localStorage.getItem('geoKey');if(k)return k;}catch(e){}
+  try{const r=await fetch('api/config',{cache:'no-store'});const d=await r.json();
+    if(d.geoKey){try{localStorage.setItem('geoKey',d.geoKey)}catch(e){}return d.geoKey;}}catch(e){}
+  return '';
+}
+let CESIUM_LOADING=null;
+function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('could not load '+src));document.head.appendChild(s);});}
+async function initCesium(key){
+  document.getElementById('geostat').textContent='loading Cesium…';
+  if(!window.Cesium){window.CESIUM_BASE_URL='/cesium/';
+    const css=document.createElement('link');css.rel='stylesheet';css.href='/cesium/Widgets/widgets.css';
+    document.head.appendChild(css);
+    await loadScript('/cesium/Cesium.js');}
+  if(THREEVIEW.cesium){THREEVIEW.cesium.destroy();THREEVIEW.cesium=null;}
+  THREEVIEW.ctl?.dispose();THREEVIEW.ren?.dispose();THREEVIEW.ren=null;
+  const W=document.getElementById('threewrap');W.innerHTML='';
+  const viewer=new Cesium.Viewer(W,{requestRenderMode:true,maximumRenderTimeChange:Infinity,targetFrameRate:30,animation:false,timeline:false,baseLayerPicker:false,geocoder:false,homeButton:false,sceneModePicker:false,navigationHelpButton:false,fullscreenButton:false,infoBox:false,selectionIndicator:false});
+  viewer.resolutionScale=Math.min(1,1/(window.devicePixelRatio||1));
+  THREEVIEW.cesium=viewer;MODE3D='cesium';THREEREADY=true;
+  viewer.scene.renderError.addEventListener(()=>{document.getElementById('geostat').textContent='Photoreal rendering unavailable — using stylized view';THREEREADY=false;initThreeFallback();});
+  document.getElementById('geostat').textContent='streaming tiles…';
+  if(key.startsWith('AIza')){Cesium.GoogleMaps.defaultApiKey=key;
+    const ts=await Cesium.createGooglePhotorealistic3DTileset();
+    viewer.scene.primitives.add(ts);
+    ts.tileFailed.addEventListener(()=>{if(THREEVIEW.cesium!==viewer)return;document.getElementById('geostat').textContent='Photoreal tiles unavailable — using stylized view';THREEREADY=false;initThreeFallback();});
+  }else{Cesium.Ion.defaultAccessToken=key;
+    const ts=await Cesium.Cesium3DTileset.fromIonAssetId(2275207);
+    viewer.scene.primitives.add(ts);
+    ts.tileFailed.addEventListener(()=>{if(THREEVIEW.cesium!==viewer)return;document.getElementById('geostat').textContent='Photoreal tiles unavailable — using stylized view';THREEREADY=false;initThreeFallback();});
+  }
+  window.dispatchEvent(new Event('resize'));
+  setTimeout(()=>{const cvs=W.querySelector('canvas');
+    if(cvs){cvs.style.width='100%';cvs.style.height='100%';}},200);
+  viewer.scene.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(113.9265,22.30,2800),
+    orientation:{heading:Cesium.Math.toRadians(25),pitch:Cesium.Math.toRadians(-35)},duration:2.5});
+  const occ0=new Set(boardToday().map(r=>r.gate));
+  THREEVIEW.cesiumGates={};
+  for(const[g,info]of Object.entries(GATES)){
+    const col=occ0.has(g)?Cesium.Color.fromCssColorString('#f59e0b'):Cesium.Color.fromCssColorString('#5b6675');
+    const e=viewer.entities.add({
+      position:Cesium.Cartesian3.fromDegrees(info.lon,info.lat,15),
+      cylinder:{length:30,topRadius:3.5,bottomRadius:3.5,material:col},
+      label:{text:'Gate '+g,font:'11px sans-serif',fillColor:Cesium.Color.WHITE,outlineColor:Cesium.Color.BLACK,outlineWidth:2,
+        style:Cesium.LabelStyle.FILL_AND_OUTLINE,pixelOffset:new Cesium.Cartesian2(0,-26),
+        disableDepthTestDistance:Number.POSITIVE_INFINITY,distanceDisplayCondition:new Cesium.DistanceDisplayCondition(0,6000)}
+    });
+    THREEVIEW.cesiumGates[g]=e;
+  }
+  viewer.scene.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(113.9265,22.30,2800),
+    orientation:{heading:Cesium.Math.toRadians(25),pitch:Cesium.Math.toRadians(-35)},duration:0.1});
+  if(THREEVIEW.cesium===viewer)document.getElementById('geostat').textContent='photoreal active';
+}
+async function initThree(){
+  const key=await getGeoKey();
+  if(key){initCesium(key).catch(e=>{
+      document.getElementById('geostat').textContent='photoreal failed — '+e.message+' (using stylized)';
+      initThreeFallback();});return;}
+  initThreeFallback();
+}
+function initThreeFallback(){
+  if(THREEREADY&&MODE3D==='three'){THREEVIEW.resize();return;}
+  if(THREEVIEW.cesium){THREEVIEW.cesium.destroy();THREEVIEW.cesium=null;}
+  THREEVIEW.ctl?.dispose();THREEVIEW.ren?.dispose();
+  MODE3D='three';
+  const W=document.getElementById('threewrap');W.innerHTML='';
+  const hint=document.getElementById('threehint');
+  try{
+    const box=W.getBoundingClientRect();
+    const w=Math.max(300,Math.round(box.width)),ht=Math.max(300,Math.round(box.height));
+    const ren=new THREE.WebGLRenderer({antialias:true});
+    ren.setClearColor(0xdfe9f3,1);
+    ren.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+    ren.setSize(w,ht);
+    W.appendChild(ren.domElement);
+    THREEVIEW.ren=ren;
+    const scene=new THREE.Scene();
+    scene.background=new THREE.Color(0xdfe9f3);
+    scene.fog=new THREE.Fog(0xdfe9f3,4000,14000);
+    THREEVIEW.scene=scene;
+    const cam=new THREE.PerspectiveCamera(50,w/ht,1,30000);
+    cam.position.set(-1800,1500,2400);
+    THREEVIEW.cam=cam;
+    const ctl=new THREE.OrbitControls(cam,ren.domElement);
+    ctl.target.set(0,0,-200);ctl.maxPolarAngle=Math.PI/2.04;ctl.update();
+    THREEVIEW.ctl=ctl;
+    scene.add(new THREE.HemisphereLight(0xdfeaff,0x93a08c,.85));
+    const sun=new THREE.DirectionalLight(0xffffff,.6);sun.position.set(-900,1400,700);scene.add(sun);
+    const C=[22.3125,113.9265],mx=111320*Math.cos(C[0]*Math.PI/180),mz=110540;
+    const P=(lat,lon)=>[(lon-C[1])*mx,-(lat-C[0])*mz];
+    const ground=new THREE.Mesh(new THREE.PlaneGeometry(14000,14000),new THREE.MeshLambertMaterial({color:0xa8c6dd}));
+    ground.rotation.x=-Math.PI/2;ground.position.y=-0.5;scene.add(ground);
+    const island=new THREE.Mesh(new THREE.PlaneGeometry(6300,3500),new THREE.MeshLambertMaterial({color:0xb7c2b0}));
+    island.rotation.x=-Math.PI/2;island.position.set(300,0,-500);scene.add(island);
+    const G3=DATA.geo3d||{};
+    const mat=(c,o)=>new THREE.MeshLambertMaterial(Object.assign({color:c,side:THREE.DoubleSide},o||{}));
+    const strip=(pts,wd)=>{
+      const v=[];
+      for(let i=1;i<pts.length;i++){
+        const a=P(pts[i-1][1],pts[i-1][0]),b=P(pts[i][1],pts[i][0]);
+        if([a[0],a[1],b[0],b[1]].some(x=>!isFinite(x)||Math.abs(x)>15000))continue;
+        const dx=b[0]-a[0],dz=b[1]-a[1],L=Math.hypot(dx,dz)||1;
+        const px=-dz/L*wd/2,pz=dx/L*wd/2;
+        v.push(a[0]+px,a[1]+pz,b[0]+px,b[1]+pz,b[0]-px,b[1]-pz);
+        v.push(a[0]+px,a[1]+pz,b[0]-px,b[1]-pz,a[0]-px,a[1]-pz);
+      }
+      return v;
+    };
+    const merged=(tri,c,y)=>{
+      if(!tri.length)return null;
+      const g=new THREE.BufferGeometry();
+      g.setAttribute('position',new THREE.Float32BufferAttribute(tri,3));
+      g.computeVertexNormals();
+      const m=new THREE.Mesh(g,mat(c,{emissive:c,emissiveIntensity:.35}));
+      m.position.y=y;scene.add(m);return m;
+    };
+    let rv=[];for(const pts of (G3.rwy||[]))rv=rv.concat(strip(pts,45));
+    merged(rv,0x3d4a5c,0.4);
+    let tv=[];for(const pts of (G3.twy||[]))tv=tv.concat(strip(pts,16));
+    merged(tv,0x9aa8b6,0.3);
+    (G3.aprons||[]).forEach((poly,idx)=>{
+      const pts2=poly.map(([lon,lat])=>{const[x,z]=P(lat,lon);return new THREE.Vector2(x,z);});
+      if(pts2.length<3)return;
+      const shape=new THREE.Shape(pts2);
+      const m=new THREE.Mesh(new THREE.ShapeGeometry(shape),mat(0xd6dce2,{emissive:0xd6dce2,emissiveIntensity:.35}));
+      m.rotation.x=-Math.PI/2;m.position.y=0.15+idx*0.03;scene.add(m);
+    });
+    const BCOL={terminal:0x93a3b3,construction:0xc4ccd4,hangar:0xaab4be,building:0xb2bcc6};
+    (G3.buildings||[]).forEach(b=>{
+      if(!b.pts||b.pts.length<4)return;
+      const pts2=b.pts.map(([lon,lat])=>{const[x,z]=P(lat,lon);return new THREE.Vector2(x,z);});
+      if(pts2.length<3)return;
+      const shape=new THREE.Shape(pts2);
+      const c=BCOL[b.k]||0xb2bcc6;
+      const m=new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:b.h,bevelEnabled:false}),mat(c,{emissive:c,emissiveIntensity:.28}));
+      m.rotation.x=-Math.PI/2;scene.add(m);
+    });
+    const occ=new Set(boardToday().map(r=>r.gate));
+    const cyl=new THREE.CylinderGeometry(3.5,3.5,30,10);
+    const stubG=new THREE.BoxGeometry(14,3,3);
+    for(const[g,info]of Object.entries(GATES)){
+      const[x,z]=P(info.lat,info.lon);
+      const m=new THREE.Mesh(cyl,mat(occ.has(g)?0xf59e0b:0x5b6675,{emissive:occ.has(g)?0x7a5210:0x2a333d,emissiveIntensity:.5}));
+      m.position.set(x,15,z);scene.add(m);
+      THREEVIEW.pillars[g]=m;
+      const st=new THREE.Mesh(stubG,mat(0x8b97a4,{emissive:0x8b97a4,emissiveIntensity:.25}));
+      st.position.set(x+8,10,z);st.rotation.y=(g.charCodeAt(0)%7)/7*Math.PI;scene.add(st);
+    }
+    ctl.update();ren.render(scene,cam);
+    const loop=()=>{if(THREEVIEW.ren!==ren)return;try{if(THREEREADY&&MODE3D==='three'&&VIEW==='3d'&&!document.hidden){ctl.update();ren.render(scene,cam);}}catch(e){}
+      requestAnimationFrame(loop);};
+    loop();
+    if(window.ResizeObserver){new ResizeObserver(()=>THREEVIEW.resize()).observe(W);}
+    THREEREADY=true;
+  }catch(e){
+    console.error('3D init failed:',e);
+    hint.textContent='3D failed: '+e.message;
+    hint.style.color='#b91c1c';
+    return;
+  }
+}
+
+document.getElementById('geosave').addEventListener('click',()=>{
+  const k=document.getElementById('geokey').value.trim();
+  if(!k)return;
+  try{localStorage.setItem('geoKey',k)}catch(e){}
+  MODE3D='three';THREEREADY=false;
+  const W=document.getElementById('threewrap');W.innerHTML='';
+  THREEVIEW.ctl?.dispose();THREEVIEW.ren?.dispose();THREEVIEW.ren=null;
+  initThree();
+});
+document.getElementById('geostylized').addEventListener('click',()=>{
+  try{localStorage.removeItem('geoKey')}catch(e){}
+  if(THREEVIEW.cesium){THREEVIEW.cesium.destroy();THREEVIEW.cesium=null;}
+  MODE3D='three';THREEREADY=false;
+  document.getElementById('geostat').textContent='';
+  initThreeFallback();
+});
+
+badge();
+poll();
+setInterval(badge,5000);
+setInterval(poll,60000);
+clockRender();
+boardRender();
+/* ── intro ── */
+const IWORDS=['VHHH','HONG KONG','CHEK LAP KOK','CLK · HKG'];
+let ITILES=[],IWORD=0;
+(function(){
+  const c=document.getElementById('iflaps');
+  for(let i=0;i<12;i++){const t=mkTile();c.appendChild(t);ITILES.push(t);}
+})();
+function introWord(){
+  const w=IWORDS[IWORD%IWORDS.length];IWORD++;
+  const padded=w.padEnd(12).slice(0,12);
+  padded.split('').forEach((ch,j)=>qFlip(ITILES[j],ch===' '?' ':ch,j*45));
+}
+setInterval(()=>{if(!document.hidden&&!document.getElementById('intro').classList.contains('gone'))introWord();},4200);
+function introTicker(){
+  const el=document.getElementById('istrip');if(!el)return;
+  const rows=boardRows('D').filter(r=>!['DEPARTED','CANCELLED'].includes(r.st)).slice(0,4);
+  if(!rows.length){el.textContent='No upcoming departures in the current feed.';return;}
+  el.innerHTML=rows.map(r=>`<div class="ir"><span>${r.time} &nbsp;<b>${curNum(r)}</b></span><span>${cityOf(r)}</span><span class="ig">${r.gate?'GATE '+rowGate(r):''}</span></div>`).join('');
+}
+setInterval(introTicker,4000);
+function introClock(){
+  const c=document.getElementById('iclock');if(!c)return;
+  const d=new Date();
+  const s=hkClock();
+  if(!CLOCKI.length){for(let i=0;i<8;i++){const t=mkTile();c.appendChild(t);CLOCKI.push(t);}}
+  c.setAttribute('aria-label',s+' Hong Kong time');
+  CLOCKI.forEach((t,j)=>qFlip(t,s[j],0));
+}
+const CLOCKI=[];
+setInterval(introClock,1000);
+let IMAP=null;let INTROVIEW=null;
+function initIntroMap(){
+  if(IMAP)return;
+  IMAP=L.map('intromap',{zoomControl:false,dragging:false,scrollWheelZoom:false,doubleClickZoom:false,touchZoom:false,boxZoom:false,keyboard:false,attributionControl:false});
+  IMAP.setView([22.305,113.925],13);
+  L.tileLayer('tiles/{z}/{x}/{y}.png?sat=1',{maxZoom:18}).addTo(IMAP);
+}
+document.querySelectorAll('.ichoose-card').forEach(c=>{
+  c.addEventListener('click',()=>{window.INTROVIEW=c.dataset.v;window.INTROBD=c.dataset.bd||'D';enterConsole();});
+});
+initIntroMap();
+function enterConsole(){
+  const iv=document.getElementById('intro');
+  iv.classList.add('gone');document.getElementById('app').inert=false;
+  setTimeout(()=>{
+    iv.style.display='none';
+    if(window.INTROVIEW)showView(window.INTROVIEW);
+    if(!window.INTROVIEW||window.INTROVIEW==='board'){
+      BOARDDIR=window.INTROBD||'D';
+      document.querySelectorAll('#bdirseg button').forEach(x=>x.classList.toggle('on',x.dataset.bd===BOARDDIR));
+      boardRender();
+    }
+  },750);
+}
+document.getElementById('ienter').addEventListener('click',()=>{window.INTROVIEW='board';window.INTROBD='D';enterConsole();});
+document.getElementById('homebtn').addEventListener('click',()=>{const intro=document.getElementById('intro');intro.style.display='block';intro.classList.remove('gone');document.getElementById('app').inert=true;IMAP?.invalidateSize();introTicker();document.getElementById('ienter').focus({preventScroll:true});intro.scrollTop=0;});
+for(const id of ['boardfilter','statusfilter'])document.getElementById(id).addEventListener('input',()=>{boardPage=0;boardRender();});
+document.getElementById('clearfilters').onclick=()=>{document.getElementById('boardfilter').value='';document.getElementById('statusfilter').value='';boardPage=0;boardRender();};
+document.getElementById('prevpage').onclick=()=>{boardPage--;boardRender();};
+document.getElementById('nextpage').onclick=()=>{boardPage++;boardRender();};
+document.addEventListener('keydown',e=>{if(e.target===document.body&&e.key==='Enter'&&document.getElementById('intro')&&!document.getElementById('intro').classList.contains('gone'))enterConsole();});
+badge();
+introWord();
+introClock();
+setTimeout(introTicker,900);
+select(null);
+showView('board');
+</script>
+</body>
+</html>

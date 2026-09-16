@@ -1,0 +1,24 @@
+# API keys / secrets — never commit real keys
+keys/adbx_key.txt
+keys/geo_key.txt
+keys/openaip_key.txt
+*.key
+.env
+.env.*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Runtime data
+*.sqlite
+*.sqlite3
+*.db
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
