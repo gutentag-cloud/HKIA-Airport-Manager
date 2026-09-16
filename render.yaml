@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: hkia-live-map
+    runtime: python
+    plan: free
+
+    rootDir: AirportManager
+    buildCommand: python3 -m py_compile hkia_live_server.py
+    startCommand: python3 hkia_live_server.py
+
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: PYTHON_VERSION
+        value: "3.13.6"
+      - key: ADBX_KEY
+        sync: false
+      - key: GEO_KEY
+        sync: false
+      - key: OPENAIP_KEY
+        sync: false

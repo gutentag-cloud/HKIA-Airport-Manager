@@ -381,6 +381,9 @@ def predict_runways():
 
 
 def adbx_key():
+    v = (os.environ.get("ADBX_KEY") or "").strip()
+    if v:
+        return v
     try:
         return open(ADBX_KEY_PATH).read().strip()
     except Exception:
@@ -633,10 +636,12 @@ def wimage(title):
 
 
 def openaip_fixes():
-    try:
-        tok = open(OPENAIP_KEY_PATH).read().strip()
-    except Exception:
-        tok = ""
+    tok = (os.environ.get("OPENAIP_KEY") or "").strip()
+    if not tok:
+        try:
+            tok = open(OPENAIP_KEY_PATH).read().strip()
+        except Exception:
+            tok = ""
     if not tok:
         return {"error": "no token saved"}
     out = subprocess.run(["curl", "-s", "--max-time", "20",
@@ -714,7 +719,7 @@ def poll_forever(interval=300):
             snap = fetch_types()
             m = harvest_types(snap)
             t = harvest_reglog(snap)
-            arrgate_forever
+            n = log_rows(rows)
             if n or m:
                 print(f"[poll] +{n} rows, +{m} type matches, reglog {t} -> archive", flush=True)
         except Exception as e:
@@ -795,7 +800,6 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
         elif self.path.startswith("/tiles/"):
-            import os
             from urllib.parse import urlparse, parse_qs
             parts = self.path.split("/")
             qs = parse_qs(urlparse(self.path).query)
@@ -919,7 +923,6 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
         elif self.path.startswith("/fonts/"):
-            import os
             rel = self.path[len("/fonts/"):].split("?")[0]
             p = os.path.normpath(os.path.join(FONTS_DIR, rel))
             if not p.startswith(FONTS_DIR) or not os.path.isfile(p):
@@ -931,10 +934,12 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
         elif self.path.startswith("/api/config"):
-            try:
-                k = open(GEO_KEY_PATH).read().strip()
-            except Exception:
-                k = ""
+            k = (os.environ.get("GEO_KEY") or "").strip()
+            if not k:
+                try:
+                    k = open(GEO_KEY_PATH).read().strip()
+                except Exception:
+                    k = ""
             body = json.dumps({"geoKey": k}).encode()
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
@@ -942,7 +947,6 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
         elif self.path.startswith("/charts/"):
-            import os
             rel = self.path[len("/charts/"):].split("?")[0]
             p = os.path.normpath(os.path.join(CHARTS_DIR, rel))
             if not p.startswith(CHARTS_DIR) or not os.path.isfile(p):
@@ -953,7 +957,6 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
         elif self.path.startswith("/cesium/"):
-            import os
             rel = self.path[len("/cesium/"):].split("?")[0]
             p = os.path.normpath(os.path.join(CESIUM_DIR, rel))
             if not p.startswith(CESIUM_DIR) or not os.path.isfile(p):
@@ -996,8 +999,10 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", type=int, default=8461)
     a = ap.parse_args()
+    host = os.environ.get("HOST", "127.0.0.1")
+    port = int(os.environ.get("PORT", a.port))
     threading.Thread(target=poll_forever, daemon=True).start()
     threading.Thread(target=arrgate_forever, daemon=True).start()
     threading.Thread(target=rwy_forever, daemon=True).start()
-    print(f"VHHH live map : http://localhost:{a.port}  (archive logging every 5 min)", flush=True)
-    ThreadingHTTPServer(("127.0.0.1", a.port), Handler).serve_forever()
+    print(f"VHHH live map : http://localhost:{port}  (archive logging every 5 min)", flush=True)
+    ThreadingHTTPServer((host, port), Handler).serve_forever()
