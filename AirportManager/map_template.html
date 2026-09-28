@@ -158,6 +158,26 @@ button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,inpu
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 #board{--tw:clamp(16px,1.42vw,26px);--th:clamp(28px,2.2vw,40px);flex-shrink:0}#board .tile{width:var(--tw);height:var(--th)}#board .tile span{height:var(--th);line-height:var(--th);font-size:clamp(17px,1.65vw,25px)}#board .brow,#board .chead{gap:3px}#board .chead{width:max-content}#board .chead span{flex:none}#boardempty{color:#435549}#hdr h1::before{display:none}.seg button{border-radius:0!important}#bsnd{border-radius:3px}#intro .tile{flex-shrink:0}
 #boardview{background:#ecece4}#board{background:#202623;border-color:#111614}.tile .h{background:#f2efe4;box-shadow:inset 0 0 0 1px #d8d2bf}.tile .h.t{border-bottom-color:#bfb79f}.tile .ft,.tile .fb{background:#e3ddca}.tile .seam{background:#aaa28b}.tile.st-boarding span,.tile.st-final-call span,.tile.st-gate-closed span,.tile.st-gate-chgd span{color:#236044}.tile.st-delayed span{color:#946300}.tile.st-cancelled span{color:#a0392d}.tile.st-departed span,.tile.dim span{color:#8b918c}.bar i{background:#7fa398}.bar.sel i{background:#d7aa2d}
+#map{position:relative;background:#dfe7e1}.maptools{position:absolute;top:12px;left:12px;right:12px;z-index:600;display:flex;gap:6px;align-items:center;flex-wrap:wrap;background:#f8f7f2e8;border:1px solid #c9c7bb;padding:8px;border-radius:3px;box-shadow:0 4px 14px rgba(25,31,28,.12)}.maptools button,.maptools select{background:#faf9f4;border:1px solid #bcbfb6;border-radius:3px;color:#25342f;padding:6px 9px;font-size:12px}.maptools button.on{background:#254d48;color:#fff;border-color:#254d48}.maptools select{max-width:180px}.mapsync{font:11px ui-monospace,monospace;color:#55645d;margin-left:auto}.legend{border-radius:3px}
+
+#mapstage{position:relative;display:flex;flex:1;flex-direction:column;min-width:0;background:#d5e3df}#mapstage #map{flex:1;min-height:280px;background:#d5e3df}
+#mapstage .maptools{position:relative;inset:auto;z-index:2;border:0;border-bottom:1px solid #c5cec5;border-radius:0;box-shadow:none;padding:14px;background:#f7f6ef;gap:8px}
+.maptitle{font:700 21px Georgia,serif;letter-spacing:1px;margin-right:14px;color:#254b40}.maptitle span{display:block;font:11px system-ui;letter-spacing:0;color:#69776d}
+#mapgate{border:1px solid #bcbfb6;border-radius:3px;padding:6px;width:72px;background:#faf9f4}.mapcompass{position:absolute;top:135px;right:20px;z-index:500;font:600 13px monospace;color:#425e56;pointer-events:none}
+#mapstage .legend{position:relative;inset:auto;z-index:2;border:0;background:#f7f6ef;padding:12px;color:#566a5e;font-size:11px}.mlabel{background:#f7f6efee;color:#314c43;text-shadow:none;font-weight:600;border:1px solid #b7c3b5;border-radius:3px;padding:3px 6px;transform:translate(-50%,-120%)}
+.board-tools select,.board-tools button{border-radius:3px}#bhead #repgob,#bhead #repexit{background:#36594e!important;border-radius:3px!important}
+@media(max-width:800px){#mapview{flex-direction:column}#mapstage{min-height:65vh}#mapview #panel{width:auto;max-height:35vh}.mapsync{width:100%}.maptitle{width:100%}}
+
+/* Responsive board and rebuilt schematic */
+#mobileclock{font:600 15px ui-monospace,monospace;color:#254d48}#bclock{display:none!important}
+#boardcards{display:grid;gap:8px}#boardcards[hidden],#board[hidden]{display:none!important}.flight-card{display:grid;grid-template-columns:70px 1fr 50px;gap:6px 12px;text-align:left;border:1px solid #d0d5c9;border-radius:5px;background:#faf9f3;color:#233d32;padding:14px;width:100%;cursor:pointer;font:inherit}.card-time{font:700 19px ui-monospace,monospace}.flight-card small{display:block;font:10px system-ui;color:#6c7c70;margin-top:4px}.card-main{min-width:0}.card-main strong{display:block}.card-main>span{display:block;font-size:11px;color:#66766b;overflow-wrap:anywhere}.card-gate{text-align:right;font-weight:700}.card-status{grid-column:2/4;font-size:12px;color:#456453}.card-status.st-delayed,.card-status.st-cancelled{color:#945c2b}
+#mapstage #map{background:#e8eee7;min-height:350px}.gate-symbol{background:none;border:0}.gate-dot{width:30px;height:28px;border:1px solid #799782;border-radius:5px;font:700 11px system-ui;color:#fff;cursor:pointer;box-shadow:0 1px 2px #254d4833}.gate-dot{transform:scale(var(--gate-scale,1));transform-origin:center}.map-overview .gate-dot{font-size:0;border-radius:50%}.gate-muted{color:#516357}.hide-gate-labels .gate-dot{font-size:0}#mapstage .maptools{gap:6px;padding:10px}.maptools button,.maptools select{min-height:38px}.mapsync{font-size:10px}#maparea{max-width:155px}#mapview{min-height:0}#mapstage{min-height:0}#mapstage .legend{font-size:10px;padding:8px}
+@media(max-width:700px){
+html,body{height:100%;overflow:hidden}#app{height:100dvh}#hdr{padding:8px 10px;gap:6px}#hdr h1{font-size:14px}#hdr .win{display:none}#viewseg{order:4;width:100%;overflow:auto;flex-shrink:0}#viewseg button{flex:1;min-height:42px;padding:8px;font-size:11px}#search{display:none}#live{margin-left:auto;font-size:10px;max-width:44%}#homebtn{padding:8px;min-height:40px}#main{min-height:0}#boardview{padding:10px}#bhead{gap:8px;flex-wrap:wrap}#btitle{width:100%;font-size:10px}#mobileclock{margin-right:auto}#bhint,#bsnd{display:none}.board-tools{gap:6px;margin-bottom:8px}.board-tools input{width:100%;flex-basis:100%;min-width:0}.board-tools input,.board-tools select{font-size:16px;max-width:100%;min-height:42px}.board-tools button{min-height:42px;padding:7px 10px;font-size:12px}#repdate{font-size:16px!important;min-height:40px;max-width:150px}#board{padding:8px}#mapview{overflow-y:auto;flex-direction:column}#mapstage{flex:none;height:64dvh;min-height:460px}#mapstage #map{min-height:240px}.maptitle{display:none}.maptools select,.maptools input{font-size:16px!important;min-height:40px}.maptools button{font-size:11px;min-height:40px}.maptools #mapairline{max-width:145px}.mapsync{width:100%;margin:0}#mapview #panel{width:100%;height:auto;max-height:none;flex:none;overflow:visible;padding:14px}#taxiview,#flowview{overflow:auto;flex-direction:column}#taximap,#flowmap{min-height:52dvh;flex:none}#taxipanel,#flowside{width:100%;height:auto;overflow:visible}#geobar{flex-wrap:wrap}#geokey{min-width:0;width:100%}.i-greet{font-size:clamp(30px,8vw,48px)}.i-wrap{padding-bottom:30px}
+}
+#geobar{align-items:center;background:#f7f7edee;gap:6px}#geobar button{background:#31594a;color:white;border-radius:3px;min-height:38px;font-size:12px}#photooptions{font-size:11px;color:#435d4e}#photooptions summary{cursor:pointer;padding:8px}#photooptions[open]{flex-basis:100%}#photooptions input{width:min(320px,100%);padding:8px;font-size:16px}#threehint{max-width:90%;font-size:11px}
+#realmap{flex:1;min-height:280px;background:#e8eee7}#realmap[hidden],#map[hidden]{display:none!important}#geobar{flex-wrap:wrap}
+@media(min-width:701px) and (max-width:1000px){#mapview{flex-direction:column;overflow:auto}#mapstage{flex:none;width:100%;height:65vh;min-height:450px}#mapview #panel{flex:none;width:100%;height:auto;max-height:none;overflow:visible}}
 </style>
 </head>
 <body>
@@ -203,10 +223,10 @@ button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,inpu
     <div id="boardview">
       <div id="bhead">
         <span id="btitle">HONG KONG INTERNATIONAL AIRPORT · DEPARTURES</span>
-        <div class="bclock" id="bclock"></div>
-        <input type="date" id="repdate" style="padding:4px 8px;border-radius:8px;border:1px solid #cbd5e1;font-size:12px">
-        <button id="repgob" style="background:#1d4ed8;color:#fff;border:0;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;font-weight:600">REPLAY</button>
-        <button id="repexit" style="display:none;background:#b91c1c;color:#fff;border:0;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;font-weight:600">EXIT REPLAY</button>
+        <div class="bclock" id="bclock"></div><time id="mobileclock"></time>
+        <input type="date" id="repdate" aria-label="Flight date" style="padding:4px 8px;border-radius:8px;border:1px solid #cbd5e1;font-size:12px">
+        <button id="repgob" style="background:#1d4ed8;color:#fff;border:0;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;font-weight:600">Find date</button>
+        <button id="repexit" style="display:none;background:#b91c1c;color:#fff;border:0;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;font-weight:600">Back to live</button>
         <div class="seg" id="bdirseg">
           <button data-bd="D" class="on">DEP</button>
           <button data-bd="A">ARR</button>
@@ -214,23 +234,35 @@ button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,inpu
         <span id="bhint">click a row to locate on map</span>
         <button id="bsnd">SOUND OFF</button>
       </div>
-      <div class="board-tools"><input id="boardfilter" type="search" aria-label="Filter flights" placeholder="Flight, airline, destination or gate"><select id="statusfilter" aria-label="Filter status"><option value="">All statuses</option><option>BOARDING</option><option>DELAYED</option><option>CANCELLED</option><option>SCHEDULED</option><option>ARRIVED</option></select><button id="clearfilters">Clear</button></div>
+      <div class="board-tools"><select id="boardperiod" aria-label="Flight time range"><option value="now">Now &amp; upcoming</option><option value="earlier">Earlier today</option><option value="all">All flights today</option></select><button id="boardnow">Jump to now</button><input id="boardfilter" type="search" aria-label="Filter flights" placeholder="Flight, airline, destination or gate"><select id="statusfilter" aria-label="Filter status"><option value="">All statuses</option><option>BOARDING</option><option>DELAYED</option><option>CANCELLED</option><option>SCHEDULED</option><option>ARRIVED</option></select><button id="clearfilters">Clear</button><button id="boardlayout">List view</button><button id="boardrefresh">Refresh</button><button id="boardexport">Export CSV</button></div>
       <div class="board-tools"><span id="boardcount" role="status"></span><button id="prevpage">← Previous</button><button id="nextpage">Next →</button></div>
-      <div id="board"></div><div id="boardempty" hidden>No flights match these filters.</div>
+      <div id="boardcards" aria-live="polite"></div><div id="board"></div><div id="boardempty" hidden>No flights match these filters.</div>
     </div>
     <div id="mapview">
-      <div id="map"><div class="legend" id="legend"></div></div>
+      <div id="mapstage">
+        <div class="maptools" id="maptools">
+          <strong class="maptitle">HKG <span>Airport map</span></strong><button id="mapkind">Geographic map</button><button data-mapmode="busy" class="on">Gate activity</button>
+          <button data-mapmode="live">Live gates</button>
+          <button data-mapmode="airline">Airline</button>
+          <select id="mapairline" aria-label="Map airline focus"></select>
+          <button id="maptraffic">Aircraft ↗</button><select id="maparea" aria-label="Map concourse"><option value="">All concourses</option></select>
+          <button id="maplabels">Labels on</button>
+          <input id="mapgate" aria-label="Find gate" placeholder="Gate no." size="7"><button id="mapfind">Find gate</button><button id="mapfit">Reset view</button>
+          <button id="mapnext">Next live gate</button>
+          <span class="mapsync" id="mapsync"></span>
+        </div>
+        <div id="map"></div><div id="realmap" hidden></div><div class="legend" id="legend"></div>
+      </div>
       <div id="panel"></div>
     </div>
     <div id="threeview">
       <div id="threewrap"></div>
       <div id="geobar">
-        <input id="geokey" placeholder="paste Google Maps API key (AIza&hellip;, Map Tiles API) or Cesium ion token for photoreal Google Earth 3D" style="flex:1">
-        <button id="geosave">USE PHOTOREAL</button>
-        <button id="geostylized">STYLIZED</button>
+        <button id="geostylized">Stylized</button><button id="threehome">Reset view</button><button id="threetop">Top view</button><button id="threetaxi">Taxiways on</button><button id="threegates">Gates on</button><button id="threeground">Ground on</button>
+        <details id="photooptions"><summary>Photoreal settings</summary><input id="geokey" aria-label="Photoreal API key" type="password" placeholder="Google Maps key or Cesium token"><button id="geosave">Use photoreal</button></details>
         <span id="geostat"></span>
       </div>
-      <div id="threehint">drag to orbit &middot; scroll to zoom &middot; amber pillars = gates with departures today</div>
+      <div id="threehint">Drag to orbit · pinch or scroll to zoom · tap a gate for flights</div>
     </div>
     <div id="flowview">
       <div id="flowmap"></div>
@@ -281,7 +313,7 @@ const airlineGates=a=>DATA.combos[K].ga[a]||{};
 const flightInfo=f=>{const e=DATA.combos[K].fl[f];return e?{a:e.a,g:e.g,t:Object.values(e.g).reduce((s,v)=>s+v,0)}:null;};
 const allFlights=()=>Object.entries(DATA.combos[K].fl).map(([f,e])=>({f,a:e.a,g:e.g,t:Object.values(e.g).reduce((s,v)=>s+v,0)}));
 const fmt=n=>n.toLocaleString('en-US');
-const heat=t=>{const a=[219,234,254],b=[29,78,216];return`rgb(${a.map((v,i)=>Math.round(v+(b[i]-v)*t)).join(',')})`;};
+const heat=t=>{const a=[187,207,192],b=[44,91,75];return`rgb(${a.map((v,i)=>Math.round(v+(b[i]-v)*t)).join(',')})`;};
 const LIVE={rows:DATA.live?.rows||[],trails:[],ts:(DATA.live?.ts||0)*1000,mode:DATA.live?.rows?.length?'snapshot':'archive',pairs:{}};
 function modalGate(a){const c=DATA.combos[K].ga[a]||{};let bg=null,bn=0;for(const g in c)if(c[g]>bn){bn=c[g];bg=g;}return bg;}
 LIVE.extArr=DATA.live?.extArr||{};
@@ -301,6 +333,8 @@ const liveAt=g=>LIVE.rows.filter(r=>r.gate===g);
 const hkDate=d=>d.toLocaleDateString('sv',{timeZone:'Asia/Hong_Kong'});
 const tk=()=>hkDate(new Date());
 const hkClock=()=>new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Hong_Kong',hour12:false});
+const rowEpoch=r=>new Date((r.date||tk())+'T'+(r.time||'00:00')+':00+08:00').getTime();
+const minsTo=r=>Math.round((rowEpoch(r)-Date.now())/60000);
 const fresh=r=>{const m=/Dep (\d{2}:\d{2})/.exec(r.status);if(!m)return true;
   return Date.now()-new Date(r.date+'T'+m[1]+':00+08:00').getTime()<45*60000;};
 const boardToday=()=>LIVE.rows.filter(r=>r.dir==='D'&&r.gate&&r.date===tk()&&fresh(r));
@@ -309,16 +343,19 @@ function badge(){
   const el=document.getElementById('live'),tx=document.getElementById('livetext');
   el.className='';
   if(LIVE.mode==='live'){el.classList.add('ok');tx.textContent='LIVE · updated '+rel(LIVE.ts);}
-  else if(LIVE.mode==='snapshot'){el.classList.add('snap');tx.textContent='build-time snapshot · run hkia_live_server.py for live';}
+  else if(LIVE.mode==='snapshot'){el.classList.add('snap');tx.textContent='Cached flights · updated '+(LIVE.ts?rel(LIVE.ts):'unknown');}
   else if(LIVE.mode==='replay')tx.textContent='Historical archive';
-  else tx.textContent='archive only · run hkia_live_server.py for live';
+  else if(LIVE.mode==='loading')tx.textContent='Updating flight feed…';
+  else tx.textContent='Flight feed unavailable · retrying';
 }
-let REPLAY=false;
+let REPLAY=false,REPLAYREQUEST=0,LIVEBACKUP=null,POLLREQUEST=0,POLLRETRY=null;
 async function poll(){
   if(REPLAY)return;
-  try{const r=await fetch('api/live',{cache:'no-store'});if(!r.ok)throw 0;
-    const d=await r.json();if(REPLAY)return;if(d.error||!Array.isArray(d.rows))throw 0;
-    LIVE.rows=d.rows;LIVE.ts=d.ts*1000;LIVE.mode='live';
+  const request=++POLLREQUEST;clearTimeout(POLLRETRY);
+  try{const r=await fetch('api/live',{cache:'no-store',signal:AbortSignal.timeout(20000)});if(!r.ok)throw 0;
+    const d=await r.json();if(REPLAY||request!==POLLREQUEST)return;if(d.error||!Array.isArray(d.rows))throw 0;
+    if(d.loading){LIVE.mode='loading';POLLRETRY=setTimeout(poll,3000);}
+    else{LIVE.rows=d.rows;LIVE.ts=d.ts*1000;LIVE.mode=d.stale?'snapshot':'live';}
     if(d.types)Object.assign(TYPES,d.types);
     if(d.pairs)LIVE.pairs=d.pairs;
     if(d.extArr)LIVE.extArr=d.extArr;
@@ -326,54 +363,121 @@ async function poll(){
   checkWatch();
     if(d.runway){LIVE.runway=d.runway;updateRwyInfo();}
   if(d.trails){LIVE.trails=d.trails;
-    if(TAXIMAP)drawTrails(d.trails,TAXIMAP,TRAILLINES.taxi);
     if(FLOWMAP)drawTrails(d.trails,FLOWMAP,FLOWLINES.flow);
     drawMapTraf(d.trails);}
-  }catch(e){LIVE.mode=LIVE.rows.length?'snapshot':'archive';}
-  badge();render();
+  }catch(e){if(REPLAY||request!==POLLREQUEST)return;LIVE.mode=LIVE.rows.length?'snapshot':'archive';POLLRETRY=setTimeout(poll,10000);}
+  badge();render();if(THREEREADY)THREEVIEW.refresh();
   if(VIEW==='board')boardRender();else boardDirty=true;
   if(!state.sel)select(null);
 }
 const nameOf=a=>AIR[a]||a;
 
-const map=L.map('map',{zoomControl:true}).setView([22.3125,113.9265],14);
-const STYLE={runway:{color:'#3d4a5c',fillColor:'#3d4a5c',fillOpacity:.95,weight:1},
-taxiway:{color:'#8fa3b8',weight:2.5},
-apron:{color:'#d3dde8',fillColor:'#e9eef4',fillOpacity:1,weight:1},
-building:{color:'#b6c3d1',fillColor:'#ccd7e2',fillOpacity:1,weight:.6},
-terminal:{color:'#334155',fillColor:'#8296ab',fillOpacity:.95,weight:1},
-construction:{color:'#64748b',fillColor:'#cbd5e1',fillOpacity:.45,weight:1,dashArray:'5 4'},
-hangar:{color:'#b6c3d1',fillColor:'#ccd7e2',fillOpacity:1,weight:.6}};
-L.geoJSON(DATA.geo,{style:f=>STYLE[f.properties.k]||{}}).addTo(map);
-for(const[t,[la,lo]]of Object.entries(DATA.labels)){if(!la)continue;L.marker([la,lo],{icon:L.divIcon({className:'',html:`<div class="mlabel">${t}</div>`,iconSize:null}),interactive:false}).addTo(map);}
-
-const MAPTRAF=L.layerGroup().addTo(map);
-let TRAFON=true;
+const map=L.map('map',{crs:L.CRS.Simple,zoomControl:false,preferCanvas:true,minZoom:-2,maxZoom:2,zoomSnap:.25}).setView([330,550],0);
+L.control.zoom({position:'bottomright'}).addTo(map);
+const AIRPORTBOUNDS=L.latLngBounds([[0,0],[660,1100]]);
+const SCHEMATIC_AREAS=[
+  {name:'Midfield',x:70,y:185,w:265,h:190},
+  {name:'NW pier',x:385,y:185,w:235,h:135},
+  {name:'T1 Satellite',x:705,y:155,w:260,h:135},
+  {name:'SW pier',x:385,y:360,w:235,h:135},
+  {name:'Central concourse',x:675,y:345,w:330,h:135},
+  {name:'T1 north',x:715,y:515,w:290,h:120},
+  {name:'Remote/bus',x:70,y:435,w:265,h:135}
+];
+const SCHEMATIC_GATES={};
+const schematicPoint=(x,y)=>[660-y,x];
+let schematicSvg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 660"><rect width="1100" height="660" fill="#e8eee7"/><path d="M30 120H1070V640H30Z" fill="#f6f3e9" stroke="#cbd2c5"/><text x="40" y="32" font-family="sans-serif" font-size="13" letter-spacing="3" fill="#536b5d">HONG KONG INTERNATIONAL AIRPORT</text>';
+for(const [y,label] of [[55,'NORTH RUNWAY'],[105,'CENTRE RUNWAY']]){
+  schematicSvg+=`<rect x="40" y="${y}" width="1020" height="28" rx="3" fill="#475e53"/><path d="M65 ${y+14}H1040" stroke="#dce4db" stroke-dasharray="14 12"/><text x="850" y="${y-5}" font-family="sans-serif" font-size="9" fill="#536b5d">${label}</text>`;
+}
+schematicSvg+='<path d="M200 280H530V425H850V570" fill="none" stroke="#c5cec0" stroke-width="18"/><path d="M200 280H530V425H850V570" fill="none" stroke="#f8f6ec" stroke-width="2" stroke-dasharray="5 6"/>';
+for(const area of SCHEMATIC_AREAS){
+  const gates=Object.keys(GATES).filter(g=>GATES[g].area===area.name).sort((a,b)=>Number(a)-Number(b));
+  const cols=Math.min(6,Math.max(4,Math.ceil(gates.length/3)));
+  schematicSvg+=`<rect x="${area.x}" y="${area.y}" width="${area.w}" height="${area.h}" rx="10" fill="#e0e7dc" stroke="#bbc9b8"/><text x="${area.x+16}" y="${area.y+26}" font-family="sans-serif" font-weight="600" font-size="15" fill="#365447">${area.name}</text>`;
+  gates.forEach((g,i)=>{SCHEMATIC_GATES[g]=schematicPoint(area.x+25+(i%cols)*(area.w-50)/(cols-1),area.y+55+Math.floor(i/cols)*32);});
+}
+schematicSvg+='<text x="410" y="570" font-family="sans-serif" font-size="12" fill="#647467">SOUTH RUNWAY · SOUTH APRON</text><text x="410" y="595" font-family="sans-serif" font-size="11" fill="#647467">Schematic · not to scale</text></svg>';
+L.imageOverlay('data:image/svg+xml;charset=utf-8,'+encodeURIComponent(schematicSvg),AIRPORTBOUNDS,{interactive:false}).addTo(map);
+const STYLE={runway:{color:'#475956',weight:13,lineCap:'butt'},
+taxiway:{color:'#c5bfa8',weight:2,opacity:.85},
+apron:{color:'#d2ccbc',fillColor:'#ded9ca',fillOpacity:1,weight:1},
+building:{color:'#c4c5b8',fillColor:'#d4d5c8',fillOpacity:1,weight:.5},
+terminal:{color:'#425e56',fillColor:'#8ca499',fillOpacity:1,weight:1.5},
+construction:{color:'#b5ae99',fillColor:'#e6e0ce',fillOpacity:.6,weight:1,dashArray:'4 4'},
+hangar:{color:'#a8b2a5',fillColor:'#c1cabb',fillOpacity:1,weight:1}};
+let TRAFON=true,MAPMODE='busy',MAPAIRLINE='',MAPNEXT=0,MAPLABELSON=true;
 function drawMapTraf(trails){
-  MAPTRAF.clearLayers();
-  if(!TRAFON)return;
-  for(const t of trails||[]){
-    if(!t.pts||!t.pts.length)continue;
-    const p=t.pts[t.pts.length-1];
-    const col=t.dir==='dep'?'#f59e0b':(t.dir==='arr'?'#1d4ed8':'#7d8ca3');
-    const route=(DATA.csRoutes||{})[t.cs]||'';
-    L.circleMarker([p[0],p[1]],{radius:4,color:'#fff',weight:1,fillColor:col,fillOpacity:.95})
-      .bindTooltip(`${t.cs}${t.t?' · '+t.t:''} ${route?'→ '+route:''} · ${Math.round(p[2]||0)} ft`)
-      .addTo(MAPTRAF);
-  }
+  const button=document.getElementById('maptraffic');
+  if(button)button.textContent=`Aircraft (${(trails||[]).length}) ↗`;
 }
 const MK={};
-for(const[g,info]of Object.entries(GATES)){
-  const m=L.circleMarker([info.lat,info.lon],{radius:7,color:'#fff',weight:1.5,fillOpacity:.95}).addTo(map);
-  m.on('click',()=>select({type:'gate',id:g}));
-  m.bindTooltip(g,{direction:'top'});
-  MK[g]=m;
+for(const [g,point] of Object.entries(SCHEMATIC_GATES)){
+  const marker=L.marker(point,{icon:L.divIcon({className:'gate-symbol',html:`<button type="button" aria-label="Gate ${g}" class="gate-dot">${g}</button>`,iconSize:[30,28],iconAnchor:[15,14]}),keyboard:false}).addTo(map);
+  marker.on('click',()=>select({type:'gate',id:g}));
+  MK[g]={setStyle(style){const el=marker.getElement()?.querySelector('button');if(!el)return;el.style.background=style.fillColor;el.style.color=style.fillColor==='#236044'?'#fff':'#183a2a';el.style.opacity=Math.max(.55,style.fillOpacity);el.style.outline=state.sel?.type==='gate'&&state.sel.id===g?'3px solid #ba8429':'none';el.classList.toggle('gate-muted',style.fillOpacity<.5);},marker};
+}
+function sizeSchematicGates(){
+  const scale=Math.min(1.35,Math.pow(2,map.getZoom())*.85);
+  document.getElementById('map').style.setProperty('--gate-scale',scale);
+  document.getElementById('map').classList.toggle('map-overview',scale<.65);
+}
+map.on('zoomend',sizeSchematicGates);sizeSchematicGates();
+let REALMAP=null,REALMODE=false;const REALGATES={};
+function initRealMap(){
+  if(REALMAP)return;
+  REALMAP=L.map('realmap',{preferCanvas:true}).setView([22.3125,113.9265],14);
+  L.tileLayer('tiles/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap · CARTO'}).addTo(REALMAP);
+  L.geoJSON(DATA.geo,{style:f=>STYLE[f.properties.k]||{}}).addTo(REALMAP);
+  for(const [g,info] of Object.entries(GATES)){
+    REALGATES[g]=L.circleMarker([info.lat,info.lon],{radius:6,color:'#fff',weight:1,fillColor:'#31594a',fillOpacity:1}).addTo(REALMAP).bindTooltip('Gate '+g);
+    REALGATES[g].on('click',()=>select({type:'gate',id:g}));
+  }
+}
+function fitAirportMap(){
+  if(REALMODE)REALMAP.fitBounds(L.latLngBounds(Object.values(GATES).map(g=>[g.lat,g.lon])).pad(.15));
+  else map.fitBounds(AIRPORTBOUNDS,{padding:[12,12]});
+}
+document.getElementById('mapkind').onclick=()=>{
+  REALMODE=!REALMODE;document.getElementById('map').hidden=REALMODE;document.getElementById('realmap').hidden=!REALMODE;
+  document.getElementById('mapkind').textContent=REALMODE?'Schematic map':'Geographic map';
+  document.getElementById('maplabels').disabled=REALMODE;
+  document.getElementById('legend').textContent=REALMODE?'Geographic map · actual gate coordinates · OpenStreetMap':'Schematic · not to scale · tap a gate for flights';
+  if(REALMODE){initRealMap();REALMAP.invalidateSize();}else map.invalidateSize();
+  fitAirportMap();render();if(state.sel?.type==='gate')fly(state.sel.id);
+};
+function liveGateWeights(){
+  const out={};
+  for(const r of LIVE.rows||[]){
+    if(r.date!==tk())continue;
+    const g=r.dir==='A'?arrGate(r):r.gate;
+    if(!g)continue;
+    const m=minsTo(r);
+    if(r.dir==='D'&&(m<-45||m>360))continue;
+    if(r.dir==='A'&&(m<-90||m>360))continue;
+    out[g]=(out[g]||0)+1;
+  }
+  return out;
+}
+function occupiedGates(){return new Set(Object.keys(liveGateWeights()));}
+function updateMapSync(){
+  const el=document.getElementById('mapsync');if(!el)return;
+  const mode=MAPMODE==='busy'?'Gate activity':MAPMODE==='live'?'Live gates':'Airline focus';
+  el.textContent=`${mode} · ${hkClock().slice(0,5)} HKT${REPLAY?' · archive':LIVE.mode!=='live'?' · cached':''}`;
+}
+function focusNextLiveGate(){
+  const gs=Object.keys(liveGateWeights()).filter(g=>GATES[g]).sort((a,b)=>(+a||999)-(+b||999));
+  if(!gs.length){document.getElementById('mapsync').textContent='No active gates in the current feed';return;}
+  const g=gs[MAPNEXT++%gs.length];
+  showView('map');select({type:'gate',id:g});fly(g);
 }
 function render(){
   const tot=gateTotals(),max=Math.max(1,...Object.values(tot));
-  const occ=new Set(boardToday().map(r=>r.gate));
+  const occ=occupiedGates();
   let hl=null,weights={};
   if(state.sel?.type==='gate')hl={[state.sel.id]:1};
+  if(MAPMODE==='live'&&!state.sel)weights=liveGateWeights();
+  if(MAPMODE==='airline'&&MAPAIRLINE&&!state.sel)weights=airlineGates(MAPAIRLINE);
   if(state.sel?.type==='airline')weights=airlineGates(state.sel.id);
   if(state.sel?.type==='flight'){const i=flightInfo(state.sel.id);if(i)weights=i.g;}
   const selMode=state.sel&&state.sel.type!=='gate';
@@ -382,14 +486,19 @@ function render(){
     const t=tot[g]||0;
     if(state.sel?.type==='gate'){
       m.setStyle({radius:g===state.sel.id?13:5,fillColor:g===state.sel.id?'#f59e0b':(t?heat(t/max):'#d1d5db'),fillOpacity:g===state.sel.id?1:(t?.85:.5)});
-    }else if(selMode){
+    }else if(selMode||MAPMODE==='live'||(MAPMODE==='airline'&&MAPAIRLINE)){
       const w=weights[g]||0;
-      m.setStyle({radius:w?7+Math.sqrt(w/wmax)*9:4,fillColor:w?'#f59e0b':'#d1d5db',fillOpacity:w?.95:.45});
+      m.setStyle({radius:w?4+Math.sqrt(w/wmax)*4:2,fillColor:w?(MAPMODE==='live'&&!state.sel?'#236044':'#d7aa2d'):'#d1d5db',fillOpacity:w?.95:.35,
+        color:occ.has(g)?'#236044':'#fff',weight:occ.has(g)?3:1.2,dashArray:occ.has(g)?'3 3':''});
     }else{
-      m.setStyle({radius:6+Math.sqrt(t/max)*10,fillColor:t?heat(t/max):'#d1d5db',fillOpacity:t?.95:.45,
-        color:occ.has(g)?'#b45309':'#fff',weight:occ.has(g)?3:1.5,dashArray:occ.has(g)?'3 3':''});
+      m.setStyle({radius:3+Math.sqrt(t/max)*4,fillColor:t?heat(t/max):'#d1d5db',fillOpacity:t?.95:.45,
+        color:occ.has(g)?'#236044':'#fff',weight:occ.has(g)?3:1.5,dashArray:occ.has(g)?'3 3':''});
     }
   }
+  for(const [g,marker] of Object.entries(REALGATES)){
+    marker.setStyle({radius:state.sel?.type==='gate'&&state.sel.id===g?10:6,fillColor:state.sel?.id===g?'#d7aa2d':MAPMODE==='live'?(occ.has(g)?'#236044':'#bbc6bb'):MAPMODE==='airline'?(weights[g]?'#d7aa2d':'#bbc6bb'):heat((tot[g]||0)/max)});
+  }
+  updateMapSync();
 }
 function bars(entries,total,attr,selKey,limit=10){
   total=Math.max(1,total);
@@ -406,7 +515,7 @@ function wire(panel){
   panel.querySelectorAll('[data-airline]').forEach(e=>e.onclick=()=>select({type:'airline',id:e.dataset.airline}));
   panel.querySelectorAll('[data-flight]').forEach(e=>e.onclick=()=>select({type:'flight',id:e.dataset.flight}));
 }
-function fly(g){const i=GATES[g];if(i)map.flyTo([i.lat,i.lon],17,{duration:.6});}
+function fly(g){if(REALMODE&&GATES[g]){REALMAP.setView([GATES[g].lat,GATES[g].lon],17);return;}const point=SCHEMATIC_GATES[g];if(point)map.setView(point,1,{animate:false});}
 function select(sel){
   state.sel=sel;render();
   const p=document.getElementById('panel');
@@ -428,8 +537,8 @@ function overview(p){
     <div class="stat"><b>${fmt(grand)}</b>gate movements</div>
     <div class="stat"><b>${gt.filter(([,v])=>v>0).length}</b>gates used</div>
     <div class="stat"><b>${Object.keys(agg).length}</b>airlines</div></div>
-    <h2>On the boards now</h2>${boardToday().sort((a,b)=>a.time.localeCompare(b.time)).slice(0,15).map(r=>`<div class="now" data-gate="${r.gate}"><b>${r.time} ${r.f}</b> &rarr; ${r.dest} · Gate ${r.gate}<span class="st">${r.status}</span></div>`).join('')||'<p class="crumb">No departures currently on the boards (or no live feed — run hkia_live_server.py).</p>'}
-    <h2>Arriving — gates</h2>${(()=>{const a=LIVE.rows.filter(r=>r.dir==='A'&&r.date===tk()).sort((x,y)=>x.time.localeCompare(y.time)).slice(0,10);
+    <h2>On the boards now</h2>${boardRows('D').filter(r=>!['DEPARTED','CANCELLED'].includes(r.st)).slice(0,15).map(r=>`<div class="now" data-gate="${r.gate}"><b>${r.time} ${r.f}</b> &rarr; ${r.dest} · Gate ${r.gate}<span class="st">${r.status}</span></div>`).join('')||'<p class="crumb">No departures currently on the boards (or no live feed — run hkia_live_server.py).</p>'}
+    <h2>Arriving — gates</h2>${(()=>{const a=boardRows('A').slice(0,10);
       return a.map(r=>{const eg=arrGate(r);const fed=(LIVE.extArr[r.f]||LIVE.pairs[r.f])?'':'~';const belt=(LIVE.extArr[r.f]||{}).belt;
         const ld=landedOf(r);
         return `<div class="now" data-flight="${r.f}"><b>${r.time} ${r.f}</b> from ${r.dest}<span class="st">${ld?'landed '+ld:(eg?fed+eg:'est…')}${belt?' · belt '+belt:''}</span></div>`;}).join('')||'<p class="crumb">No arrivals on the boards.</p>';})()}
@@ -438,9 +547,7 @@ function overview(p){
       for(const[f,pr]of Object.entries(LIVE.pairs)){
         const a=arrs.find(x=>x.f===f);if(!a)continue;
         const d=boardToday().find(x=>x.f===pr.next);if(!d)continue;
-        const[ah,am]=a.time.split(':').map(Number);const[dh,dm]=d.time.split(':').map(Number);
-        const now=new Date();const nm=now.getHours()*60+now.getMinutes();
-        const left=(dh*60+dm)-nm;
+        const left=minsTo(d);
         items.push({f,reg:REGS[f],next:pr.next,gate:pr.gate,left});
       }
       items.sort((x,y)=>x.left-y.left);
@@ -640,7 +747,7 @@ function regPanel(p,reg){
 }
 
 function destPanel(p,city){
-  const dep=boardToday().filter(r=>cityOf(r)===city).sort((a,b)=>a.time.localeCompare(b.time));
+  const dep=boardRows('D').filter(r=>cityOf(r)===city);
   const gates={};dep.forEach(r=>{if(r.gate)gates[r.gate]=(gates[r.gate]||0)+1;});
   const types={};dep.forEach(r=>{const t2=TYPES[r.f];if(t2)types[t2]=(types[t2]||0)+1;});
   p.innerHTML=`<div class="crumb"><a onclick="select(null)">&larr; overview</a></div>
@@ -648,21 +755,14 @@ function destPanel(p,city){
     <div class="stats"><div class="stat"><b>${dep.length}</b>flights today</div>
     <div class="stat"><b>${Object.keys(gates).length}</b>gates used</div>
     <div class="stat"><b>${Object.keys(types).slice(0,1)[0]||'—'}</b>usual aircraft</div></div>
-    <button id="drawarc" style="background:#1d4ed8;color:#fff;border:0;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;font-weight:600;margin:4px 0">draw route arc on map</button>
+    <button id="drawarc" style="background:#1d4ed8;color:#fff;border:0;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;font-weight:600;margin:4px 0">View routes in Approaches</button>
     <h2>Gates today</h2>${bars(gates,dep.length,'data-gate',null,8)}
     <h2>Aircraft types</h2>${bars(types,dep.length,'data-none',null,8).replace('data-none','data-x')}
     <h2>Flights</h2>${dep.map(r=>`<div class="now" data-flight="${r.f}"><b>${r.time} ${r.f}</b> · Gate ${r.gate||'?'}<span class="st">${r.status}</span></div>`).join('')}`;
   wire(p);
   document.getElementById('drawarc').onclick=()=>{
-    const code=Object.keys(AIRPORTS).find(k=>AIRPORTS[k].toUpperCase()===city.toUpperCase());
-    const o=code&&(DATA.origins||{})[code];
-    if(!o)return;
-    if(window.MAPARC)MAPARC.forEach(l2=>map.removeLayer(l2));
-    window.MAPARC=[
-      L.polyline([[o.la,o.lo],[22.3125,113.9265]],{color:'#7c3aed',weight:2,dashArray:'5 7',opacity:.8}).addTo(map).bindTooltip(city+' → VHHH'),
-      L.circleMarker([o.la,o.lo],{radius:6,color:'#7c3aed',fillColor:'#ddd6fe',fillOpacity:1}).addTo(map).bindTooltip(code)
-    ];
-    map.fitBounds(L.polyline([[o.la,o.lo],[22.3125,113.9265]]).getBounds().pad(0.3));
+    ARCS=true;document.getElementById('tglarcs').checked=true;showView('flow');
+
   };
 }
 
@@ -684,7 +784,33 @@ function submitSearch(e){
 }
 document.getElementById('search').addEventListener('change',submitSearch);
 document.getElementById('search').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();submitSearch(e);}});
-document.getElementById('legend').innerHTML=`offline schematic · geometry &copy; OpenStreetMap<span class="sw" style="background:#1d4ed8"></span>busy gates<span class="sw" style="background:#f59e0b;border:1px dashed #b45309"></span>occupied now`;
+document.getElementById('legend').innerHTML='Schematic · not to scale · tap a gate for flights <span class="sw" style="background:#236044"></span>Activity <span class="sw" style="background:#d7aa2d"></span>Selected airline';
+const mapAirline=document.getElementById('mapairline');
+mapAirline.innerHTML='<option value="">Choose airline…</option>'+Object.entries(AIR).filter(([c])=>Object.keys(airlineGates(c)).length).sort((a,b)=>a[1].localeCompare(b[1])).map(([c,n])=>`<option value="${c}">${c} · ${esc(n)}</option>`).join('');
+document.getElementById('maptools').addEventListener('click',e=>{
+  const mode=e.target.closest('[data-mapmode]');
+  if(mode){MAPMODE=mode.dataset.mapmode;document.querySelectorAll('[data-mapmode]').forEach(b=>b.classList.toggle('on',b===mode));state.sel=null;select(null);render();return;}
+});
+mapAirline.addEventListener('change',e=>{MAPAIRLINE=e.target.value;MAPMODE='airline';document.querySelectorAll('[data-mapmode]').forEach(b=>b.classList.toggle('on',b.dataset.mapmode==='airline'));state.sel=null;select(MAPAIRLINE?{type:'airline',id:MAPAIRLINE}:null);render();});
+document.getElementById('maptraffic').onclick=()=>showView('flow');
+document.getElementById('maplabels').onclick=e=>{MAPLABELSON=!MAPLABELSON;document.getElementById('map').classList.toggle('hide-gate-labels',!MAPLABELSON);e.currentTarget.textContent=MAPLABELSON?'Labels on':'Labels off';};
+const mapArea=document.getElementById('maparea');
+mapArea.innerHTML+='<option value="active">Active gates</option>'+SCHEMATIC_AREAS.map(a=>`<option>${a.name}</option>`).join('');
+mapArea.onchange=()=>{
+  if(REALMODE){const active=occupiedGates();const points=Object.entries(GATES).filter(([g,i])=>!mapArea.value||(mapArea.value==='active'?active.has(g):i.area===mapArea.value)).map(([,i])=>[i.lat,i.lon]);if(points.length)REALMAP.fitBounds(L.latLngBounds(points).pad(.2),{maxZoom:17});return;}
+  const area=SCHEMATIC_AREAS.find(a=>a.name===mapArea.value);
+  if(area)map.fitBounds([schematicPoint(area.x-25,area.y-25),schematicPoint(area.x+area.w+25,area.y+area.h+25)]);
+  else if(mapArea.value==='active'){
+    const points=Object.keys(liveGateWeights()).map(g=>SCHEMATIC_GATES[g]).filter(Boolean);
+    if(points.length)map.fitBounds(L.latLngBounds(points).pad(.15),{maxZoom:1});
+  }else map.fitBounds(AIRPORTBOUNDS,{padding:[12,12]});
+};
+document.getElementById('mapfit').onclick=()=>{mapArea.value='';state.sel=null;select(null);fitAirportMap();};
+document.getElementById('mapnext').onclick=focusNextLiveGate;
+function findMapGate(){const input=document.getElementById('mapgate'),g=normGate(input.value);if(GATES[g]){input.setCustomValidity('');select({type:'gate',id:g});fly(g);}else{input.setCustomValidity('Enter a gate shown on this map');input.reportValidity();}}
+document.getElementById('mapfind').onclick=findMapGate;
+document.getElementById('mapgate').oninput=e=>e.target.setCustomValidity('');
+document.getElementById('mapgate').onkeydown=e=>{if(e.key==='Enter')findMapGate();};
 let VIEW='board',boardDirty=false;
 function showView(v){
   VIEW=v;
@@ -697,7 +823,7 @@ function showView(v){
   const elId={board:'boardview',map:'mapview',taxi:'taxiview','3d':'threeview',flow:'flowview'}[v];
   const node=document.getElementById(elId);
   if(node){node.classList.remove('viewfade');void node.offsetWidth;node.classList.add('viewfade');}
-  if(v==='map')setTimeout(()=>map.invalidateSize(),60);
+  if(v==='map')setTimeout(()=>{if(REALMODE){REALMAP.invalidateSize();return;}map.invalidateSize();if(!map._airportFitted){map.fitBounds(AIRPORTBOUNDS,{padding:[25,25]});map._airportFitted=true;}},60);
   if(v==='taxi')setTimeout(()=>{if(!TAXIMAP)initTaxi();else TAXIMAP.invalidateSize();},60);
   if(v==='flow')setTimeout(()=>{if(!FLOWMAP)initFlow();else FLOWMAP.invalidateSize();drawTrails(LIVE.trails,FLOWMAP,FLOWLINES.flow);drawArcs();},60);
   if(v==='3d')setTimeout(()=>{if(!THREEREADY)initThree();else THREEVIEW.resize();},60);
@@ -804,18 +930,24 @@ let AC=null,sndOn=false;
 function startReplay(){
   const d=document.getElementById('repdate').value;
   if(!d)return;
+  const request=++REPLAYREQUEST;
+  document.getElementById('boardcount').textContent='Loading flights…';
   fetch('api/day?date='+d,{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Archive unavailable');return r.json();}).then(j=>{
+    if(request!==REPLAYREQUEST)return;
     if(j.error||!Array.isArray(j.rows))throw Error('Archive unavailable');boardPage=0;
-    REPLAY=true;LIVE.rows=j.rows||[];LIVE.mode='replay';BOARDDIR='D';
-    document.querySelectorAll('#bdirseg button').forEach(x=>x.classList.toggle('on',x.dataset.bd==='D'));
+    if(!REPLAY)LIVEBACKUP={rows:LIVE.rows,mode:LIVE.mode,ts:LIVE.ts};
+    POLLREQUEST++;clearTimeout(POLLRETRY);REPLAY=true;LIVE.rows=j.rows||[];LIVE.mode='replay';
+    document.querySelectorAll('#bdirseg button').forEach(x=>x.classList.toggle('on',x.dataset.bd===BOARDDIR));
     document.getElementById('repexit').style.display='inline-block';
     document.getElementById('win').textContent='REPLAY '+d+' — archive board';
     badge();render();boardRender();select(null);
-  }).catch(()=>{document.getElementById('boardcount').textContent='Could not load this archive. Please try another date.';});
+  }).catch(()=>{if(request!==REPLAYREQUEST)return;document.getElementById('boardcount').textContent='Could not load this archive. Please try another date.';});
 }
 function exitReplay(){
+  REPLAYREQUEST++;
+  if(LIVEBACKUP){Object.assign(LIVE,LIVEBACKUP);LIVEBACKUP=null;}
   REPLAY=false;document.getElementById('repexit').style.display='none';document.getElementById('win').textContent='';
-  poll();select(null);
+  boardPage=0;badge();boardRender();poll();select(null);
 }
 document.getElementById('repgob').addEventListener('click',startReplay);
 document.getElementById('repexit').addEventListener('click',exitReplay);
@@ -835,7 +967,7 @@ function click(){
 function statusOf(r){const s=(r.status||'').toLowerCase();
   if(s.startsWith('dep'))return'DEPARTED';
   if(s.includes('cancel'))return'CANCELLED';
-  if(s.startsWith('delay'))return'DELAYED';
+  if(s.startsWith('delay')||s.startsWith('est'))return'DELAYED';
   if(s.includes('final'))return'FINAL CALL';
   if(s.includes('gate closed'))return'GATE CLOSED';
   if(s.includes('gate change'))return'GATE CHGD';
@@ -843,11 +975,11 @@ function statusOf(r){const s=(r.status||'').toLowerCase();
   if(s.includes('check'))return'CHECK-IN';
   return'SCHEDULED';}
 function cityOf(r){const c=(r.dest||'').split('|')[0];return(AIRPORTS[c]||c||'—');}
-let BOARDDIR='D';
+let BOARDDIR='D',BOARDPERIOD='now';
 function statusOfA(r){const s=(r.status||'').toLowerCase();
   const am=/Arr (\d{2}:\d{2})/.exec(r.status||'');
   if(am)return'ARR '+am[1];
-  if(s.startsWith('arr')||s.includes('landed'))return'ARRIVED';
+  if(s.startsWith('arr')||s.includes('landed')||s.startsWith('at gate'))return'ARRIVED';
   if(s.startsWith('delay'))return'DELAYED';
   if(s.includes('cancel'))return'CANCELLED';
   if(s.includes('expect'))return'EXPECTED';
@@ -863,15 +995,21 @@ function boardRows(dir){
     else if(!g[k].nums.includes(r.f))g[k].nums.push(r.f);
   });
   return Object.values(g)
-    .filter(r=>REPLAY||dir==='A'?true:(fresh(r)||r.st==='DELAYED'||r.st==='CANCELLED'))
-    .sort((a,b)=>((a.date===tk()?0:1)*100+ +a.time.slice(0,2))*60+ +a.time.slice(3)-((b.date===tk()?0:1)*100+ +b.time.slice(0,2))*60- +b.time.slice(3))
+
+    .sort((a,b)=>boardSortKey(a,dir)-boardSortKey(b,dir))
     ;
+}
+function boardSortKey(r,dir){
+  if(REPLAY)return rowEpoch(r);
+  const m=minsTo(r);
+  const grace=dir==='A'?90:45;
+  return (m>=-grace?0:1)*1e13+rowEpoch(r);
 }
 function rowGate(r){const est=!(LIVE.pairs[r.f]||(LIVE.extArr||{})[r.f]);const g=r.gate||arrGate(r);return g?((est&&r.dir==='A')?'~'+g:String(g)):'';}
 const altIdx={};
 const numsOf=r=>r.nums&&r.nums.length>1?r.nums:null;
 const curNum=r=>{const ns=numsOf(r);return ns?ns[(altIdx[r.date+'|'+r.time+'|'+r.gate]||0)%ns.length]:r.f;};
-let booted=false,boardPage=0;
+let booted=false,boardPage=0,BOARDLIST=matchMedia('(max-width:700px)').matches,BOARDRESULTS=[];
 function statusClass(s){return'st-'+String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
 function setTileSilent(t,ch){
   const queued=QI.get(t);if(queued){queued.done=true;QI.delete(t);}
@@ -881,18 +1019,37 @@ function setTileSilent(t,ch){
   t._disp=ch;t.dataset.ch=ch;
   t._ts.textContent=ch;t._bs.textContent=ch;
 }
+function matchesBoardPeriod(r,period,query=''){
+  if(REPLAY||query)return true;
+  const minutes=minsTo(r);
+  if(period==='earlier')return r.date===tk()&&minutes<0;
+  if(period==='all')return r.date===tk();
+  const active=r.dir==='D'?['DELAYED','BOARDING','FINAL CALL','GATE CHGD','GATE CLOSED','CHECK-IN'].includes(r.st):['DELAYED','EXPECTED'].includes(r.st);
+  return minutes>=-15||(r.date===tk()&&active);
+}
 function boardRender(){
+  if(!document.getElementById('intro').classList.contains('gone')){boardDirty=true;return;}
+  boardDirty=false;
   const query=document.getElementById('boardfilter').value.trim().toUpperCase();
   const status=document.getElementById('statusfilter').value;
-  const all=boardRows(BOARDDIR).filter(r=>(!query||[...r.nums,nameOf(r.airline),cityOf(r),r.dest,rowGate(r)].join(' ').toUpperCase().includes(query))&&(!status||r.st===status||(status==='ARRIVED'&&r.st.startsWith('ARR '))));
+  const all=boardRows(BOARDDIR).filter(r=>matchesBoardPeriod(r,BOARDPERIOD,query)).sort((a,b)=>rowEpoch(a)-rowEpoch(b)).filter(r=>(!query||[...r.nums,nameOf(r.airline),cityOf(r),r.dest,rowGate(r)].join(' ').toUpperCase().includes(query))&&(!status||r.st===status||(status==='ARRIVED'&&r.st.startsWith('ARR '))));
   boardPage=Math.min(boardPage,Math.max(0,Math.ceil(all.length/MAXROWS)-1));
+  BOARDRESULTS=all;
   const rows=all.slice(boardPage*MAXROWS,(boardPage+1)*MAXROWS);CURROWS=rows;
-  document.getElementById('boardcount').textContent=all.length?`${boardPage*MAXROWS+1}–${boardPage*MAXROWS+rows.length} of ${all.length} flights · HKT`:'0 flights';
+  document.getElementById('boardcount').textContent=all.length?`${boardPage*MAXROWS+1}–${boardPage*MAXROWS+rows.length} of ${all.length} flights · ${REPLAY?'Archive '+document.getElementById('repdate').value:'Feed updated '+(LIVE.ts?new Date(LIVE.ts).toLocaleTimeString('en-GB',{timeZone:'Asia/Hong_Kong',hour12:false})+' HKT':'unavailable')}`:'No flights in this range — try All flights today or another date';
   document.getElementById('boardempty').hidden=!!rows.length;
+  document.getElementById('boardempty').textContent=LIVE.mode==='loading'?'Loading the current flight feed…':REPLAY?'No archived flights match this date and direction.':'No flights match. Try another time range or clear your filters.';
   document.getElementById('prevpage').disabled=boardPage===0;
   document.getElementById('nextpage').disabled=(boardPage+1)*MAXROWS>=all.length;
   document.getElementById('btitle').textContent='HONG KONG INTERNATIONAL AIRPORT · '+(BOARDDIR==='D'?'DEPARTURES':'ARRIVALS');
   document.querySelector('.chead span:nth-child(5)').textContent=BOARDDIR==='D'?'DESTINATION':'ORIGIN';
+  document.getElementById('board').hidden=BOARDLIST;
+  document.getElementById('boardcards').hidden=!BOARDLIST;
+  document.getElementById('boardlayout').textContent=BOARDLIST?'Flipboard view':'List view';
+  if(BOARDLIST){
+    document.getElementById('boardcards').innerHTML=rows.map((r,i)=>`<button class="flight-card" data-row="${i}"><span class="card-time">${esc(r.time)}<small>${esc(r.date===tk()?'Today':r.date)}</small></span><span class="card-main"><strong>${esc(cityOf(r))}</strong><span>${esc(r.nums.join(' / '))} · ${esc(nameOf(r.airline))}</span></span><span class="card-gate">${esc(rowGate(r)||'—')}<small>GATE</small></span><span class="card-status ${statusClass(r.st)}">${esc(r.status||r.st)}</span></button>`).join('');
+    return;
+  }
   const n=Math.min(rows.length,MAXROWS);ensureRows(n);
   TILES.forEach((tr,i)=>{tr[0][0].parentElement.hidden=i>=n;tr[0][0].parentElement.style.display=i>=n?'none':'flex';});
   const bv=document.getElementById('boardview');
@@ -901,7 +1058,8 @@ function boardRender(){
   let changes=0;const plan=[];
   for(let i=0;i<n;i++){
     const r=rows[i];
-    TILES[i][0][0].parentElement.setAttribute('aria-label',`${r.time} ${r.f}, ${cityOf(r)}, ${r.st}`);
+    TILES[i][0][0].parentElement.title=r.date+' · Hong Kong time';
+    TILES[i][0][0].parentElement.setAttribute('aria-label',`${r.date} ${r.time} ${r.f}, ${cityOf(r)}, ${r.st}`);
     const num=r?curNum(r):'';
     const vals=r?[r.time,num,cityOf(r),TYPES[num]||TYPES[r.f]||'',rowGate(r),r.st]:['','','','','',''];
     const vis=i>=visA&&i<=visB;
@@ -918,7 +1076,7 @@ function boardRender(){
   const inview=plan.filter(p2=>p2[3]>=visA&&p2[3]<=visB);
   const outview=plan.filter(p2=>p2[3]<visA||p2[3]>visB);
   inview.forEach(([t,ch,vis,i],k)=>{
-    qFlip(t,ch,k*0.4);
+    if(!booted||changes>250)setTileSilent(t,ch);else qFlip(t,ch,k*0.4);
   });
   outview.forEach(([t,ch])=>setTileSilent(t,ch));
   if(inview.length&&sndOn)setTimeout(click,0);
@@ -929,7 +1087,7 @@ function boardRender(){
   TILES[i][1].forEach((t,j)=>qFlip(t,str[j],delay+j*14));
 }
 setInterval(()=>{
-  if(VIEW!=='board'||document.hidden||!document.getElementById('intro').classList.contains('gone'))return;
+  if(BOARDLIST||VIEW!=='board'||document.hidden||!document.getElementById('intro').classList.contains('gone'))return;
   CURROWS.forEach((r,i)=>{
     const ns=numsOf(r);if(!ns)return;
     const k=r.date+'|'+r.time+'|'+r.gate;
@@ -939,11 +1097,19 @@ setInterval(()=>{
 },7000);
 const CLOCKTILES=[];
 (function(){const c=document.getElementById('bclock');for(let i=0;i<8;i++){const t=mkTile();c.appendChild(t);CLOCKTILES.push(t);}})();
+let LASTBOARDMIN='';
 function clockRender(){
   const d=new Date();
   const s=hkClock();
   document.getElementById('bclock').setAttribute('aria-label',s+' Hong Kong time');
-  CLOCKTILES.forEach((t,j)=>qFlip(t,s[j],0));
+  document.getElementById('mobileclock').textContent=s+' HKT';
+  if(!document.hidden&&VIEW==='board'&&!BOARDLIST&&document.getElementById('intro').classList.contains('gone'))CLOCKTILES.forEach((t,j)=>qFlip(t,s[j],0));
+  const min=s.slice(0,5);
+  if(min!==LASTBOARDMIN){
+    LASTBOARDMIN=min;
+    if(VIEW==='board'&&document.getElementById('intro').classList.contains('gone'))boardRender();
+    updateMapSync();
+  }
 }
 setInterval(clockRender,1000);
 
@@ -1161,7 +1327,7 @@ function initFlow(){
     if(t.dir!=='arr')continue;
     for(const[la,lo]of t.pts){tot++;
       if(Math.abs(la-ch.la)*111+Math.abs(lo-ch.lo)*100<5){near++;break;}}}
-    document.getElementById('choverlap').innerHTML=tot?`Arrival trails passing within 5km of CH VOR: <b>${near}</b> of ${t.filter(x=>x.dir==='arr').length} tracks.`:'No arrival trails yet (builds each poll).';
+    document.getElementById('choverlap').innerHTML=tot?`Arrival trails passing within 5km of CH VOR: <b>${near}</b> of ${(LIVE.trails||[]).filter(x=>x.dir==='arr').length} tracks.`:'No arrival trails yet (builds each poll).';
   }
 }
 let ARCS=false;
@@ -1192,19 +1358,33 @@ function drawArcs(){
 const ARCLINES=[];
 
 let THREEREADY=false,MODE3D='three';
-const THREEVIEW={scene:null,cam:null,ren:null,ctl:null,pillars:{},cesium:null,
+const THREEVIEW={scene:null,cam:null,ren:null,ctl:null,pillars:{},cesium:null,observer:null,
   resize(){if(MODE3D==='cesium')return;
     if(!this.ren)return;const W=document.getElementById('threewrap');
     const r=W.getBoundingClientRect();if(r.width<10||r.height<10)return;
     this.cam.aspect=r.width/r.height;this.cam.updateProjectionMatrix();
-    this.ren.setSize(Math.round(r.width),Math.round(r.height));},
+    this.ren.setSize(Math.round(r.width),Math.round(r.height));this.ren.render(this.scene,this.cam);},
   refresh(){const occ=new Set(boardToday().map(r=>r.gate));
     if(MODE3D==='three'&&this.ren){
-      for(const g in this.pillars)this.pillars[g].material.color.set(occ.has(g)?0xf59e0b:0x64748b);}
+      for(const g in this.pillars)this.pillars[g].material.color.set(occ.has(g)?0xd79a38:0x647b69);this.ren.render(this.scene,this.cam);}
     else if(MODE3D==='cesium'&&this.cesium&&this.cesiumGates){
       for(const g in this.cesiumGates){
         const c=occ.has(g)?Cesium.Color.fromCssColorString('#f59e0b'):Cesium.Color.fromCssColorString('#5b6675');
         this.cesiumGates[g].cylinder.material=c;}}}};
+function disposeStylizedScene(){
+  THREEVIEW.observer?.disconnect();THREEVIEW.observer=null;
+  THREEVIEW.ctl?.dispose();
+  const geometries=new Set(),materials=new Set();
+  THREEVIEW.scene?.traverse(o=>{if(o.geometry)geometries.add(o.geometry);if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>materials.add(m));});
+  geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());
+  THREEVIEW.ren?.dispose();THREEVIEW.ren=null;THREEVIEW.scene=null;THREEVIEW.pillars={};
+}
+function resetThreeView(top=false){
+  if(MODE3D!=='three'||!THREEVIEW.cam)return;
+  const fit=Math.max(1,1/THREEVIEW.cam.aspect)*1.3;
+  THREEVIEW.cam.position.set(top?0:-2600*fit,top?8500*fit:3500*fit,top?1:4800*fit);
+  THREEVIEW.ctl.target.set(0,0,0);THREEVIEW.ctl.update();THREEVIEW.ren.render(THREEVIEW.scene,THREEVIEW.cam);
+}
 async function getGeoKey(){
   try{const k=localStorage.getItem('geoKey');if(k)return k;}catch(e){}
   try{const r=await fetch('api/config',{cache:'no-store'});const d=await r.json();
@@ -1220,7 +1400,7 @@ async function initCesium(key){
     document.head.appendChild(css);
     await loadScript('/cesium/Cesium.js');}
   if(THREEVIEW.cesium){THREEVIEW.cesium.destroy();THREEVIEW.cesium=null;}
-  THREEVIEW.ctl?.dispose();THREEVIEW.ren?.dispose();THREEVIEW.ren=null;
+  disposeStylizedScene();
   const W=document.getElementById('threewrap');W.innerHTML='';
   const viewer=new Cesium.Viewer(W,{requestRenderMode:true,maximumRenderTimeChange:Infinity,targetFrameRate:30,animation:false,timeline:false,baseLayerPicker:false,geocoder:false,homeButton:false,sceneModePicker:false,navigationHelpButton:false,fullscreenButton:false,infoBox:false,selectionIndicator:false});
   viewer.resolutionScale=Math.min(1,1/(window.devicePixelRatio||1));
@@ -1258,17 +1438,11 @@ async function initCesium(key){
     orientation:{heading:Cesium.Math.toRadians(25),pitch:Cesium.Math.toRadians(-35)},duration:0.1});
   if(THREEVIEW.cesium===viewer)document.getElementById('geostat').textContent='photoreal active';
 }
-async function initThree(){
-  const key=await getGeoKey();
-  if(key){initCesium(key).catch(e=>{
-      document.getElementById('geostat').textContent='photoreal failed — '+e.message+' (using stylized)';
-      initThreeFallback();});return;}
-  initThreeFallback();
-}
+async function initThree(){initThreeFallback();}
 function initThreeFallback(){
   if(THREEREADY&&MODE3D==='three'){THREEVIEW.resize();return;}
   if(THREEVIEW.cesium){THREEVIEW.cesium.destroy();THREEVIEW.cesium=null;}
-  THREEVIEW.ctl?.dispose();THREEVIEW.ren?.dispose();
+  disposeStylizedScene();
   MODE3D='three';
   const W=document.getElementById('threewrap');W.innerHTML='';
   const hint=document.getElementById('threehint');
@@ -1276,31 +1450,32 @@ function initThreeFallback(){
     const box=W.getBoundingClientRect();
     const w=Math.max(300,Math.round(box.width)),ht=Math.max(300,Math.round(box.height));
     const ren=new THREE.WebGLRenderer({antialias:true});
-    ren.setClearColor(0xdfe9f3,1);
-    ren.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+    ren.setClearColor(0xd4e2dc,1);
+    ren.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
     ren.setSize(w,ht);
     W.appendChild(ren.domElement);
     THREEVIEW.ren=ren;
     const scene=new THREE.Scene();
-    scene.background=new THREE.Color(0xdfe9f3);
-    scene.fog=new THREE.Fog(0xdfe9f3,4000,14000);
+    scene.background=new THREE.Color(0xd4e2dc);
+    scene.fog=new THREE.Fog(0xd4e2dc,22000,50000);
     THREEVIEW.scene=scene;
     const cam=new THREE.PerspectiveCamera(50,w/ht,1,30000);
-    cam.position.set(-1800,1500,2400);
+    cam.position.set(-2600,3500,4800);
     THREEVIEW.cam=cam;
     const ctl=new THREE.OrbitControls(cam,ren.domElement);
-    ctl.target.set(0,0,-200);ctl.maxPolarAngle=Math.PI/2.04;ctl.update();
+    ctl.target.set(0,0,0);ctl.maxPolarAngle=Math.PI/2.04;ctl.minDistance=150;ctl.maxDistance=11000;ctl.update();
     THREEVIEW.ctl=ctl;
-    scene.add(new THREE.HemisphereLight(0xdfeaff,0x93a08c,.85));
-    const sun=new THREE.DirectionalLight(0xffffff,.6);sun.position.set(-900,1400,700);scene.add(sun);
+    scene.add(new THREE.HemisphereLight(0xdfeaff,0x93a08c,.6));
+    const sun=new THREE.DirectionalLight(0xffffff,.45);sun.position.set(-900,1400,700);scene.add(sun);
     const C=[22.3125,113.9265],mx=111320*Math.cos(C[0]*Math.PI/180),mz=110540;
     const P=(lat,lon)=>[(lon-C[1])*mx,-(lat-C[0])*mz];
-    const ground=new THREE.Mesh(new THREE.PlaneGeometry(14000,14000),new THREE.MeshLambertMaterial({color:0xa8c6dd}));
+    const ground=new THREE.Mesh(new THREE.PlaneGeometry(14000,14000),new THREE.MeshBasicMaterial({color:0xd4e2dc}));
     ground.rotation.x=-Math.PI/2;ground.position.y=-0.5;scene.add(ground);
-    const island=new THREE.Mesh(new THREE.PlaneGeometry(6300,3500),new THREE.MeshLambertMaterial({color:0xb7c2b0}));
-    island.rotation.x=-Math.PI/2;island.position.set(300,0,-500);scene.add(island);
+    const landPoints=(DATA.geo3d.ground||[]).map(([lon,lat])=>{const[x,z]=P(lat,lon);return new THREE.Vector2(x,-z);});
+    const island=new THREE.Mesh(new THREE.ShapeGeometry(new THREE.Shape(landPoints)),new THREE.MeshLambertMaterial({color:0xc6cfb8,side:THREE.DoubleSide}));
+    island.rotation.x=-Math.PI/2;island.position.y=0;scene.add(island);THREEVIEW.land=island;
     const G3=DATA.geo3d||{};
-    const mat=(c,o)=>new THREE.MeshLambertMaterial(Object.assign({color:c,side:THREE.DoubleSide},o||{}));
+    const mat=(c,o)=>new THREE.MeshLambertMaterial(Object.assign({color:c,side:THREE.DoubleSide},o||{},{emissiveIntensity:0}));
     const strip=(pts,wd)=>{
       const v=[];
       for(let i=1;i<pts.length;i++){
@@ -1308,8 +1483,8 @@ function initThreeFallback(){
         if([a[0],a[1],b[0],b[1]].some(x=>!isFinite(x)||Math.abs(x)>15000))continue;
         const dx=b[0]-a[0],dz=b[1]-a[1],L=Math.hypot(dx,dz)||1;
         const px=-dz/L*wd/2,pz=dx/L*wd/2;
-        v.push(a[0]+px,a[1]+pz,b[0]+px,b[1]+pz,b[0]-px,b[1]-pz);
-        v.push(a[0]+px,a[1]+pz,b[0]-px,b[1]-pz,a[0]-px,a[1]-pz);
+        v.push(a[0]+px,0,a[1]+pz,b[0]+px,0,b[1]+pz,b[0]-px,0,b[1]-pz);
+        v.push(a[0]+px,0,a[1]+pz,b[0]-px,0,b[1]-pz,a[0]-px,0,a[1]-pz);
       }
       return v;
     };
@@ -1322,20 +1497,20 @@ function initThreeFallback(){
       m.position.y=y;scene.add(m);return m;
     };
     let rv=[];for(const pts of (G3.rwy||[]))rv=rv.concat(strip(pts,45));
-    merged(rv,0x3d4a5c,0.4);
-    let tv=[];for(const pts of (G3.twy||[]))tv=tv.concat(strip(pts,16));
-    merged(tv,0x9aa8b6,0.3);
+    merged(rv,0x3e554a,0.4);
+    let tv=[];for(const pts of (G3.twy||[]))tv=tv.concat(strip(pts.pts||pts,16));
+    THREEVIEW.taxiways=merged(tv,0xb4b59f,0.3);
     (G3.aprons||[]).forEach((poly,idx)=>{
-      const pts2=poly.map(([lon,lat])=>{const[x,z]=P(lat,lon);return new THREE.Vector2(x,z);});
+      const pts2=poly.map(([lon,lat])=>{const[x,z]=P(lat,lon);return new THREE.Vector2(x,-z);});
       if(pts2.length<3)return;
       const shape=new THREE.Shape(pts2);
       const m=new THREE.Mesh(new THREE.ShapeGeometry(shape),mat(0xd6dce2,{emissive:0xd6dce2,emissiveIntensity:.35}));
       m.rotation.x=-Math.PI/2;m.position.y=0.15+idx*0.03;scene.add(m);
     });
-    const BCOL={terminal:0x93a3b3,construction:0xc4ccd4,hangar:0xaab4be,building:0xb2bcc6};
+    const BCOL={terminal:0x6b9180,construction:0xd3cbb5,hangar:0x95a58e,building:0xb7bdab};
     (G3.buildings||[]).forEach(b=>{
       if(!b.pts||b.pts.length<4)return;
-      const pts2=b.pts.map(([lon,lat])=>{const[x,z]=P(lat,lon);return new THREE.Vector2(x,z);});
+      const pts2=b.pts.map(([lon,lat])=>{const[x,z]=P(lat,lon);return new THREE.Vector2(x,-z);});
       if(pts2.length<3)return;
       const shape=new THREE.Shape(pts2);
       const c=BCOL[b.k]||0xb2bcc6;
@@ -1349,16 +1524,26 @@ function initThreeFallback(){
       const[x,z]=P(info.lat,info.lon);
       const m=new THREE.Mesh(cyl,mat(occ.has(g)?0xf59e0b:0x5b6675,{emissive:occ.has(g)?0x7a5210:0x2a333d,emissiveIntensity:.5}));
       m.position.set(x,15,z);scene.add(m);
-      THREEVIEW.pillars[g]=m;
+      m.userData.gate=g;THREEVIEW.pillars[g]=m;
       const st=new THREE.Mesh(stubG,mat(0x8b97a4,{emissive:0x8b97a4,emissiveIntensity:.25}));
       st.position.set(x+8,10,z);st.rotation.y=(g.charCodeAt(0)%7)/7*Math.PI;scene.add(st);
     }
     ctl.update();ren.render(scene,cam);
-    const loop=()=>{if(THREEVIEW.ren!==ren)return;try{if(THREEREADY&&MODE3D==='three'&&VIEW==='3d'&&!document.hidden){ctl.update();ren.render(scene,cam);}}catch(e){}
-      requestAnimationFrame(loop);};
-    loop();
-    if(window.ResizeObserver){new ResizeObserver(()=>THREEVIEW.resize()).observe(W);}
-    THREEREADY=true;
+    const draw=()=>{if(THREEVIEW.ren===ren&&VIEW==='3d'&&!document.hidden)ren.render(scene,cam);};
+    ctl.addEventListener('change',draw);
+    let down=null;
+    ren.domElement.addEventListener('pointerdown',e=>{down=[e.clientX,e.clientY];});
+    ren.domElement.addEventListener('pointerup',e=>{
+      if(!down||Math.hypot(e.clientX-down[0],e.clientY-down[1])>8)return;
+      const rect=ren.domElement.getBoundingClientRect(),ray=new THREE.Raycaster();
+      ray.setFromCamera(new THREE.Vector2((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1),cam);
+      const hit=ray.intersectObjects(Object.values(THREEVIEW.pillars).filter(g=>g.visible))[0];
+      if(hit){showView('map');select({type:'gate',id:hit.object.userData.gate});fly(hit.object.userData.gate);}
+    });
+    if(window.ResizeObserver){THREEVIEW.observer=new ResizeObserver(()=>THREEVIEW.resize());THREEVIEW.observer.observe(W);}
+    hint.textContent='Drag to orbit · pinch or scroll to zoom · tap a gate for flights';hint.style.color='';
+    document.getElementById('threetaxi').textContent='Taxiways on';document.getElementById('threegates').textContent='Gates on';document.getElementById('threeground').textContent='Ground on';
+    THREEREADY=true;resetThreeView();
   }catch(e){
     console.error('3D init failed:',e);
     hint.textContent='3D failed: '+e.message;
@@ -1367,14 +1552,20 @@ function initThreeFallback(){
   }
 }
 
+for(const [id,label,layer] of [['threetaxi','Taxiways','taxiways'],['threeground','Ground','land']]){
+  document.getElementById(id).onclick=e=>{const object=THREEVIEW[layer];if(MODE3D!=='three'||!object)return;object.visible=!object.visible;e.currentTarget.textContent=label+(object.visible?' on':' off');THREEVIEW.ren.render(THREEVIEW.scene,THREEVIEW.cam);};
+}
+document.getElementById('threegates').onclick=e=>{if(MODE3D!=='three')return;const gates=Object.values(THREEVIEW.pillars),visible=!gates[0]?.visible;gates.forEach(g=>g.visible=visible);e.currentTarget.textContent='Gates'+(visible?' on':' off');THREEVIEW.ren.render(THREEVIEW.scene,THREEVIEW.cam);};
+document.getElementById('threehome').onclick=()=>resetThreeView();
+document.getElementById('threetop').onclick=()=>resetThreeView(true);
 document.getElementById('geosave').addEventListener('click',()=>{
   const k=document.getElementById('geokey').value.trim();
   if(!k)return;
   try{localStorage.setItem('geoKey',k)}catch(e){}
   MODE3D='three';THREEREADY=false;
   const W=document.getElementById('threewrap');W.innerHTML='';
-  THREEVIEW.ctl?.dispose();THREEVIEW.ren?.dispose();THREEVIEW.ren=null;
-  initThree();
+  disposeStylizedScene();
+  initCesium(k).catch(()=>{document.getElementById('geostat').textContent='Photoreal unavailable';THREEREADY=false;initThreeFallback();});
 });
 document.getElementById('geostylized').addEventListener('click',()=>{
   try{localStorage.removeItem('geoKey')}catch(e){}
@@ -1434,7 +1625,7 @@ initIntroMap();
 function enterConsole(){
   const iv=document.getElementById('intro');
   iv.classList.add('gone');document.getElementById('app').inert=false;
-  setTimeout(()=>{
+  (()=>{
     iv.style.display='none';
     if(window.INTROVIEW)showView(window.INTROVIEW);
     if(!window.INTROVIEW||window.INTROVIEW==='board'){
@@ -1442,10 +1633,22 @@ function enterConsole(){
       document.querySelectorAll('#bdirseg button').forEach(x=>x.classList.toggle('on',x.dataset.bd===BOARDDIR));
       boardRender();
     }
-  },750);
+  })();
 }
 document.getElementById('ienter').addEventListener('click',()=>{window.INTROVIEW='board';window.INTROBD='D';enterConsole();});
 document.getElementById('homebtn').addEventListener('click',()=>{const intro=document.getElementById('intro');intro.style.display='block';intro.classList.remove('gone');document.getElementById('app').inert=true;IMAP?.invalidateSize();introTicker();document.getElementById('ienter').focus({preventScroll:true});intro.scrollTop=0;});
+document.getElementById('boardcards').onclick=e=>{const card=e.target.closest('[data-row]');if(!card)return;const r=CURROWS[Number(card.dataset.row)];if(r){showView('map');select({type:'flight',id:r.f});if(r.gate)fly(r.gate);}};
+document.getElementById('boardlayout').onclick=()=>{BOARDLIST=!BOARDLIST;boardRender();};
+document.getElementById('boardrefresh').onclick=()=>{if(REPLAY)startReplay();else poll();};
+function csvCell(value){const s=String(value??'');return '"'+(/^[=+@-]/.test(s)?"'":'')+s.replace(/"/g,'""')+'"';}
+document.getElementById('boardexport').onclick=()=>{
+  const data=[['Date','Time (HKT)','Flights','Airline','Destination / origin','Gate','Status'],...BOARDRESULTS.map(r=>[r.date,r.time,r.nums.join(' / '),nameOf(r.airline),cityOf(r),rowGate(r),r.status])];
+  const blob=new Blob(['\uFEFF'+data.map(row=>row.map(csvCell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=`HKG-${BOARDDIR}-${tk()}.csv`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
+document.getElementById('repdate').value=tk();
+document.getElementById('boardperiod').onchange=e=>{BOARDPERIOD=e.target.value;boardPage=0;boardRender();};
+document.getElementById('boardnow').onclick=()=>{BOARDPERIOD='now';boardPage=0;document.getElementById('boardperiod').value='now';document.getElementById('boardfilter').value='';document.getElementById('statusfilter').value='';if(REPLAY)exitReplay();else boardRender();};
 for(const id of ['boardfilter','statusfilter'])document.getElementById(id).addEventListener('input',()=>{boardPage=0;boardRender();});
 document.getElementById('clearfilters').onclick=()=>{document.getElementById('boardfilter').value='';document.getElementById('statusfilter').value='';boardPage=0;boardRender();};
 document.getElementById('prevpage').onclick=()=>{boardPage--;boardRender();};

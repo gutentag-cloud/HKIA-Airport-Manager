@@ -28,6 +28,7 @@ CESIUM_DIR = os.path.join(VENDOR, 'cesium')
 FONTS_DIR = os.path.join(VENDOR, 'fonts')
 POLL_ROWS = []
 POLL_TS = 0
+LIVE_CACHE_PATH = os.path.join(DATA, "live_cache.json")
 CHARTS_DIR = os.path.join(VENDOR, 'charts')
 GEO_KEY_PATH = os.path.join(KEYS, 'geo_key.txt')
 TILECACHE_DIR = os.path.join(DATA, 'tilecache')
@@ -122,7 +123,35 @@ def load_known():
     return known
 
 
+def save_daily_snapshots(rows):
+    """Retain both directions and the most recently observed flight status."""
+    folder = os.path.join(DATA, "daily_snapshots")
+    os.makedirs(folder, exist_ok=True)
+    by_day = {}
+    for row in rows:
+        day = row.get("date", "")
+        try:
+            date.fromisoformat(day)
+        except ValueError:
+            continue
+        by_day.setdefault(day, []).append(row)
+    with LOCK:
+        for day, day_rows in by_day.items():
+            path = os.path.join(folder, day + ".json")
+            try:
+                with open(path) as source:
+                    previous = json.load(source)
+            except (OSError, ValueError):
+                previous = []
+            merged = {(r["dir"], r["f"], r["time"]): r for r in previous}
+            merged.update({(r["dir"], r["f"], r["time"]): r for r in day_rows})
+            with open(path + ".tmp", "w") as output:
+                json.dump(list(merged.values()), output)
+            os.replace(path + ".tmp", path)
+
+
 def log_rows(rows):
+    save_daily_snapshots(rows)
     global KNOWN
     with LOCK:
         if KNOWN is None:
@@ -701,48 +730,72 @@ def common_types():
     return out
 
 
-def get_rows():
+def restore_live_cache():
     global POLL_ROWS, POLL_TS
-    if not POLL_ROWS or time.time() - POLL_TS > 300:
-        POLL_ROWS = extract(fetch_upstream())
-        POLL_TS = time.time()
+    try:
+        with open(LIVE_CACHE_PATH) as source:
+            cached = json.load(source)
+        if isinstance(cached.get("rows"), list):
+            POLL_ROWS, POLL_TS = cached["rows"], cached.get("ts", 0)
+    except (OSError, ValueError):
+        pass
+
+
+def get_rows():
+    # Request handlers and enrichment workers never wait for the upstream feed.
     return POLL_ROWS
 
 
-def poll_forever(interval=300):
+def weather_forever():
+    while True:
+        try:
+            wx_now()
+        except Exception:
+            pass
+        time.sleep(300)
+
+
+def poll_forever(interval=60):
+    global POLL_ROWS, POLL_TS
     while True:
         try:
             rows = extract(fetch_upstream())
-            global POLL_ROWS, POLL_TS
-            POLL_ROWS = rows
-            POLL_TS = time.time()
+            if not rows:
+                raise ValueError("Empty upstream response; retaining last good feed")
+            POLL_ROWS, POLL_TS = rows, time.time()
+            with open(LIVE_CACHE_PATH + ".tmp", "w") as output:
+                json.dump({"rows": rows, "ts": POLL_TS}, output)
+            os.replace(LIVE_CACHE_PATH + ".tmp", LIVE_CACHE_PATH)
+            n = log_rows(rows)
             snap = fetch_types()
             m = harvest_types(snap)
             t = harvest_reglog(snap)
-            n = log_rows(rows)
             if n or m:
                 print(f"[poll] +{n} rows, +{m} type matches, reglog {t} -> archive", flush=True)
         except Exception as e:
-            print(f"[poll] failed: {e}", flush=True)
+            print(f"[poll] failed: {type(e).__name__}", flush=True)
         time.sleep(interval)
 
 
 class Handler(BaseHTTPRequestHandler):
     def end_headers(self):
-        self.send_header("Access-Control-Allow-Origin", "*")
+        # Allow the published dashboard to read its API without exposing it to every origin.
+        if self.headers.get("Origin") == "https://gutentag-cloud.github.io" and self.path.startswith("/api/"):
+            self.send_header("Access-Control-Allow-Origin", "https://gutentag-cloud.github.io")
+            self.send_header("Vary", "Origin")
         super().end_headers()
 
     def do_GET(self):
         if self.path.startswith("/api/live"):
             try:
-                rows = extract(fetch_upstream())
-                new = log_rows(rows)
+                rows = get_rows()
+                new = 0
                 pairs = compute_pairs(rows, load_reglog())
-                body = json.dumps({"ts": time.time(), "logged": new, "rows": rows,
+                body = json.dumps({"ts": POLL_TS, "stale": time.time() - POLL_TS > 180, "loading": not bool(rows), "logged": new, "rows": rows,
                                    "types": common_types(), "pairs": pairs,
                                    "extArr": load_arrgates(),
                                    "trails": emit_trails(),
-                                   "wx": wx_now(),
+                                   "wx": WX.get("data"),
                                    "runway": predict_runways()}).encode()
                 self.send_response(200)
             except Exception as e:
@@ -883,11 +936,19 @@ class Handler(BaseHTTPRequestHandler):
             rows = []
             try:
                 for r in csv.DictReader(open(HIST)):
-                    if r["date"] == day and r["direction"] == "D" and r["gate"]:
-                        rows.append({"date": day, "dir": "D", "f": r["flight_no"].replace(" ", ""),
+                    if r["date"] == day and r.get("cargo") != "Y":
+                        rows.append({"date": day, "dir": r["direction"], "f": r["flight_no"].replace(" ", ""),
                                      "airline": r["airline"], "gate": r["gate"], "time": r["sched_time"],
                                      "status": r["status"], "dest": r["destination"]})
             except Exception:
+                pass
+            try:
+                date.fromisoformat(day)
+                saved = json.load(open(os.path.join(DATA, "daily_snapshots", day + ".json")))
+                merged = {(r["dir"], r["f"], r["time"]): r for r in rows}
+                merged.update({(r["dir"], r["f"], r["time"]): r for r in saved})
+                rows = list(merged.values())
+            except (OSError, ValueError):
                 pass
             body = json.dumps({"rows": rows}).encode()
             self.send_response(200)
@@ -943,6 +1004,8 @@ class Handler(BaseHTTPRequestHandler):
                     k = open(GEO_KEY_PATH).read().strip()
                 except Exception:
                     k = ""
+            if self.client_address[0] not in ("127.0.0.1", "::1"):
+                k = ""
             body = json.dumps({"geoKey": k}).encode()
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
@@ -1001,9 +1064,12 @@ class Handler(BaseHTTPRequestHandler):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", type=int, default=8461)
+    ap.add_argument("--host", default="127.0.0.1", help="Use 0.0.0.0 to allow phones on your local network")
     a = ap.parse_args()
-    host = os.environ.get("HOST", "127.0.0.1")
+    host = os.environ.get("HOST", a.host)
     port = int(os.environ.get("PORT", a.port))
+    restore_live_cache()
+    threading.Thread(target=weather_forever, daemon=True).start()
     threading.Thread(target=poll_forever, daemon=True).start()
     threading.Thread(target=arrgate_forever, daemon=True).start()
     threading.Thread(target=rwy_forever, daemon=True).start()

@@ -247,45 +247,7 @@ for f, c in cs_dest.items():
     if top in AIRPORTS:
         CSROUTES[f] = AIRPORTS[top]
 
-def build_geo3d():
-    aprons, buildings, rwy, twy = [], [], [], []
-    for f in geo["features"]:
-        k = f["properties"]["k"]
-        g = f["geometry"]
-        if k == "runway":
-            rwy.append(g["coordinates"])
-        elif k == "taxiway":
-            twy.append({"pts": g["coordinates"], "ref": f["properties"].get("ref", "")})
-        elif k == "apron":
-            try:
-                ap = ShPoly(g["coordinates"][0]).buffer(0)
-                if not ap.is_empty:
-                    aprons.append(ap)
-            except Exception:
-                pass
-        elif k in ("building", "terminal", "hangar", "construction"):
-            try:
-                bp = ShPoly(g["coordinates"][0]).buffer(0)
-                if bp.is_empty:
-                    continue
-                if bp.geom_type == "MultiPolygon":
-                    bp = max(bp.geoms, key=lambda p: p.area)
-                h = max(6.0, min(140.0, f["properties"].get("h") or 10))
-                ring = bp.simplify(1.0).exterior
-                if ring and len(ring.coords) >= 4:
-                    buildings.append({"pts": [[round(x, 2), round(y, 2)] for x, y in ring.coords],
-                                      "h": round(h, 1),
-                                      "k": k})
-            except Exception:
-                pass
-    if aprons:
-        merged = unary_union(aprons).simplify(1.5)
-        polys = merged.geoms if merged.geom_type == "MultiPolygon" else [merged]
-        apron_pts = [[[round(x, 2), round(y, 2)] for x, y in p.exterior.coords]
-                     for p in polys if p.exterior and len(p.exterior.coords) >= 4]
-    else:
-        apron_pts = []
-    return {"aprons": apron_pts, "buildings": buildings, "rwy": rwy, "twy": twy}
+from airport_geometry import build_geo3d
 
 
 def parse_dep_delta(status, sched_time):
@@ -342,7 +304,7 @@ data = {
     "week": week,
     "delayByHour": DELAY_HOUR,
     "delayByAir": DELAY_AIR,
-    "geo3d": build_geo3d(),
+    "geo3d": build_geo3d(geo),
     "nav": json.load(open(os.path.join(DATA, 'navaids_hkg.json'))),
     "charts": {"pdf": "/charts/VHHH_2009_approach.pdf",
                "fixes": ["BEKOL","DOTMI","PORPA","ROVER","PRAWN","RUMSY","ATTOL","SANDI","TUNNA","LOGAN",

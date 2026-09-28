@@ -22,3 +22,10 @@ venv/
 .DS_Store
 .vscode/
 .idea/
+
+# Nested application secrets and runtime caches
+**/keys/*
+!**/keys/keys_README.txt
+**/data/live_cache.json
+**/data/daily_snapshots/
+**/data/tilecache/

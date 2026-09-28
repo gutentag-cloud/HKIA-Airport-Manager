@@ -2,12 +2,19 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const src=fs.readFileSync('map_template.html','utf8');
 const extract=(start,end)=>src.slice(src.indexOf(start),src.indexOf(end,src.indexOf(start)));
-const ctx=vm.createContext({Date,performance,Map,matchMedia:()=>({matches:true}),requestAnimationFrame:()=>{}});
-vm.runInContext(`const AIRPORTS={};const LIVE={rows:[]};let REPLAY=false;const tk=()=> '2026-09-15';const hkDate=()=> '2026-09-16';const fresh=()=>false;`+extract('function statusOf(r)','function rowGate(r)'),ctx);
+class FixedDate extends Date{static now(){return Date.parse('2026-09-15T22:59:00+08:00')}}
+const ctx=vm.createContext({Date:FixedDate,performance,Map,matchMedia:()=>({matches:true}),requestAnimationFrame:()=>{}});
+vm.runInContext(`const AIRPORTS={};const LIVE={rows:[]};let REPLAY=false;const tk=()=> '2026-09-15';const hkDate=()=> '2026-09-16';const rowEpoch=r=>new Date((r.date||tk())+'T'+(r.time||'00:00')+':00+08:00').getTime();const minsTo=r=>Math.round((rowEpoch(r)-Date.now())/60000);const fresh=()=>false;`+extract('function statusOf(r)','function rowGate(r)'),ctx);
 vm.runInContext(`LIVE.rows=[{dir:'D',date:'2026-09-10',time:'12:00',f:'CX1',dest:'LHR',status:'Dep 12:10'}];`,ctx);
 assert.equal(vm.runInContext("boardRows('D').length",ctx),0);
 vm.runInContext('REPLAY=true',ctx);
 assert.equal(vm.runInContext("boardRows('D').length",ctx),1,'Replay must retain archived flights');
+vm.runInContext(`REPLAY=false;LIVE.rows=[
+  {dir:'A',date:'2026-09-15',time:'20:00',f:'OLD',dest:'TPE',status:'Expected'},
+  {dir:'A',date:'2026-09-15',time:'23:10',f:'NEXT',dest:'SIN',status:'Expected'},
+  {dir:'A',date:'2026-09-16',time:'00:05',f:'LATER',dest:'BKK',status:'Expected'}
+];`,ctx);
+assert.equal(vm.runInContext("boardRows('A').map(r=>r.f).join(',')",ctx),'NEXT,LATER,OLD','Arrival board must sort around synced HKT now');
 vm.runInContext(extract('function setTile(t,ch)','let AC=null'),ctx);
 vm.runInContext(`const tile={dataset:{ch:' '},_disp:' ',_ts:{},_bs:{},_ft:{}};qFlip(tile,'A',500);qFlip(tile,'B',0);qstep(performance.now()+1000);`,ctx);
 assert.equal(vm.runInContext('tile._disp',ctx),'B','Delayed flip must not overwrite a newer value');
@@ -34,3 +41,24 @@ vm.runInContext(extract('function watchList()','function toggleWatch(f)'),watchC
 vm.runInContext('checkWatch()',watchContext);
 assert.equal(JSON.parse(saved.watchstate).CX1.gate,'1','Initial watch baseline must be persisted');
 console.log('Passed: watch baseline persistence');
+
+vm.runInContext(extract('function matchesBoardPeriod(', 'function boardRender()'),ctx);
+vm.runInContext(`REPLAY=false;LIVE.rows=[{dir:'D',date:'2026-09-15',time:'10:00',f:'CX1',status:'Dep 10:05'}]`,ctx);
+assert.equal(vm.runInContext("boardRows('D').length",ctx),1,'Completed departures remain searchable');
+assert.equal(vm.runInContext("matchesBoardPeriod({...LIVE.rows[0],st:'DEPARTED'},'now')",ctx),false);
+assert.equal(vm.runInContext("matchesBoardPeriod({...LIVE.rows[0],st:'DEPARTED'},'earlier')",ctx),true);
+assert.equal(vm.runInContext("matchesBoardPeriod({...LIVE.rows[0],st:'DEPARTED'},'now','CX1')",ctx),true);
+assert.equal(vm.runInContext("matchesBoardPeriod({...LIVE.rows[0],st:'DELAYED'},'now')",ctx),true,'Overdue active flights remain on the current board');
+assert.equal(vm.runInContext("matchesBoardPeriod({date:'2026-09-16',time:'00:05',dir:'A',st:'SCHEDULED'},'now')",ctx),true,'Current board crosses HKT midnight');
+assert.equal(vm.runInContext("matchesBoardPeriod({date:'2026-09-16',time:'00:05'},'earlier')",ctx),false);
+console.log('Passed: earlier flights, historical search, delayed flights and midnight');
+const geometryCtx=vm.createContext({});
+vm.runInContext('const P=(lat,lon)=>[lon,lat];'+extract('    const strip=(pts,wd)=>{','    const merged='),geometryCtx);
+const vertices=vm.runInContext('strip([[0,0],[100,0]],20)',geometryCtx);
+assert.equal(vertices.length,18,'A runway segment must contain six XYZ vertices');
+assert.ok(vertices.every(Number.isFinite),'Runway geometry contains only finite coordinates');
+assert.deepEqual(Array.from(vertices).filter((_,i)=>i%3===1),[0,0,0,0,0,0],'Runways lie on a horizontal plane');
+vm.runInContext(extract('function csvCell(value)',"document.getElementById('boardexport')"),geometryCtx);
+assert.equal(vm.runInContext('csvCell(\'a,"b"\')',geometryCtx),'"a,""b"""');
+assert.equal(vm.runInContext('csvCell("=1+1")',geometryCtx),'"\'=1+1"');
+console.log('Passed: 3D runway vertices and CSV escaping');
